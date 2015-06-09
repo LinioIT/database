@@ -38,6 +38,11 @@ class DatabaseManager
      */
     protected $adapterOptions;
 
+    /**
+     * @var bool
+     */
+    protected $hasActiveTransaction = false;
+
     public function __construct()
     {
         $this->setAdapterOptions();
@@ -165,6 +170,52 @@ class DatabaseManager
             ->execute($query, $params);
     }
 
+    /**
+     * @return bool
+     */
+    public function beginTransaction()
+    {
+        if ($this->hasActiveTransaction) {
+            return false;
+        }
+
+        $this->hasActiveTransaction = true;
+        $this->getWriteAdapter()->beginTransaction();
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function commit()
+    {
+        if (!$this->hasActiveTransaction) {
+            return false;
+        }
+
+        $this->getWriteAdapter()->commit();
+        $this->hasActiveTransaction = false;
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function rollBack()
+    {
+        if (!$this->hasActiveTransaction)
+        {
+            return false;
+        }
+
+        $this->getWriteAdapter()->rollBack();
+        $this->hasActiveTransaction = false;
+
+        return true;
+    }
+
     protected function setAdapterOptions()
     {
         $this->adapterOptions = [
@@ -252,7 +303,7 @@ class DatabaseManager
      */
     protected function getReadAdapter()
     {
-        if ($this->slaveConnections->isEmpty()) {
+        if ($this->hasActiveTransaction || $this->slaveConnections->isEmpty()) {
             return $this->getWriteAdapter();
         }
 

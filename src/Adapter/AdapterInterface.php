@@ -69,4 +69,10 @@ interface AdapterInterface
      * @return int
      */
     public function execute($query, array $params = []);
+
+    public function beginTransaction();
+
+    public function commit();
+
+    public function rollBack();
 }

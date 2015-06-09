@@ -102,4 +102,57 @@ class DatabaseManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $actual);
         $this->assertInstanceOf('\Linio\Component\Database\Entity\Connection', $actual[DatabaseManager::ROLE_MASTER]);
     }
+
+    public function testIsCreatingandCommitingTransaction()
+    {
+        $db = new DatabaseManager();
+        $connectionOptions = [
+            'host' => TEST_DATABASE_HOST,
+            'port' => TEST_DATABASE_PORT,
+            'dbname' => TEST_DATABASE_DBNAME,
+            'username' => TEST_DATABASE_USERNAME,
+            'password' => TEST_DATABASE_PASSWORD,
+        ];
+        $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
+        $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_SLAVE);
+
+        $this->assertTrue($db->beginTransaction());
+        $this->assertTrue($db->commit());
+    }
+
+    public function testIsCreatingandRollingBackTransaction()
+    {
+        $db = new DatabaseManager();
+        $connectionOptions = [
+            'host' => TEST_DATABASE_HOST,
+            'port' => TEST_DATABASE_PORT,
+            'dbname' => TEST_DATABASE_DBNAME,
+            'username' => TEST_DATABASE_USERNAME,
+            'password' => TEST_DATABASE_PASSWORD,
+        ];
+        $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
+        $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_SLAVE);
+
+        $this->assertTrue($db->beginTransaction());
+        $this->assertTrue($db->rollBack());
+    }
+
+    public function testIsNotCreatingNestedTransactions()
+    {
+        $db = new DatabaseManager();
+        $connectionOptions = [
+            'host' => TEST_DATABASE_HOST,
+            'port' => TEST_DATABASE_PORT,
+            'dbname' => TEST_DATABASE_DBNAME,
+            'username' => TEST_DATABASE_USERNAME,
+            'password' => TEST_DATABASE_PASSWORD,
+        ];
+        $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
+        $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_SLAVE);
+
+        $this->assertTrue($db->beginTransaction());
+        $this->assertFalse($db->beginTransaction());
+        $this->assertTrue($db->commit());
+    }
+
 }

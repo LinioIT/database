@@ -198,6 +198,21 @@ class PdoAdapter implements AdapterInterface
         return $stmt;
     }
 
+    public function beginTransaction()
+    {
+        $this->pdo->beginTransaction();
+    }
+
+    public function commit()
+    {
+        $this->pdo->commit();
+    }
+
+    public function rollBack()
+    {
+        $this->pdo->rollBack();
+    }
+
     /**
      * @param string $driver
      * @param array $options

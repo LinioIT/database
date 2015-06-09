@@ -242,6 +242,34 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
         $this->adapter->execute("UPDATE `nop` SET `dept_name` = ? WHERE `dept_no` = ?", ['Test Dept', 'd010']);
     }
 
+    public function testIsCreatingandCommitingTransaction()
+    {
+        $this->assertTrue($this->pdo->beginTransaction());
+        $this->assertTrue($this->pdo->commit());
+    }
+
+    public function testIsCreatingandRollingBackTransaction()
+    {
+        $this->assertTrue($this->pdo->beginTransaction());
+        $this->assertTrue($this->pdo->rollBack());
+    }
+
+    /**
+     * @expectedException \PDOException
+     */
+    public function testIsNotCommitingTransactionWithoutCreating()
+    {
+        $this->pdo->commit();
+    }
+
+    /**
+     * @expectedException \PDOException
+     */
+    public function testIsNotRollingBackTransactionWithoutCreating()
+    {
+        $this->pdo->rollBack();
+    }
+
     protected function createDatabase()
     {
         $this->pdo->exec(sprintf("CREATE DATABASE IF NOT EXISTS `%s`", $this->driverOptions['dbname']));
