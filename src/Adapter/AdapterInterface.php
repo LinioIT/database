@@ -75,4 +75,11 @@ interface AdapterInterface
     public function commit();
 
     public function rollBack();
+
+    /**
+     * @param string|null $name
+     *
+     * @return mixed
+     */
+    public function getLastInsertId($name = null);
 }

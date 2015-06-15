@@ -214,6 +214,16 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
+     * @param string|null $name
+     *
+     * @return string
+     */
+    public function getLastInsertId($name = null)
+    {
+        return $this->pdo->lastInsertId($name);
+    }
+
+    /**
      * @param string $driver
      * @param array $options
      *

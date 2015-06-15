@@ -216,6 +216,16 @@ class DatabaseManager
         return true;
     }
 
+    /**
+     * @param string|null $name
+     *
+     * @return mixed
+     */
+    public function getLastInsertId($name = null)
+    {
+        return $this->getWriteAdapter()->getLastInsertId($name);
+    }
+
     protected function setAdapterOptions()
     {
         $this->adapterOptions = [

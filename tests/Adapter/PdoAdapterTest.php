@@ -270,6 +270,15 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
         $this->pdo->rollBack();
     }
 
+    public function testIsGettingLastInsertId()
+    {
+        $this->adapter->execute("INSERT INTO `departments` (`dept_no`, `dept_name`) VALUES (?, ?)", ['d010', 'Test Dept 110']);
+
+        $actual = $this->adapter->getLastInsertId();
+
+        $this->assertEquals(10, $actual);
+    }
+
     protected function createDatabase()
     {
         $this->pdo->exec(sprintf("CREATE DATABASE IF NOT EXISTS `%s`", $this->driverOptions['dbname']));
