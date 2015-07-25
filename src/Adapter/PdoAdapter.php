@@ -6,9 +6,7 @@ use Linio\Component\Database\DatabaseManager;
 use Linio\Component\Database\Entity\LazyFetch;
 use Linio\Component\Database\Exception\DatabaseConnectionException;
 use Linio\Component\Database\Exception\DatabaseException;
-use Linio\Component\Database\Exception\DatabaseStatementException;
 use Linio\Component\Database\Exception\InvalidQueryException;
-use Linio\Component\Database\Exception\InvalidQueryStatementException;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -22,8 +20,8 @@ class PdoAdapter implements AdapterInterface
 
     // @codingStandardsIgnoreStart
     /**
-     * @param string $driver ;
-     * @param array $options
+     * @param string $driver  ;
+     * @param array  $options
      * @param string $role
      */
     public function __construct($driver, array $options, $role)
@@ -34,7 +32,7 @@ class PdoAdapter implements AdapterInterface
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @throws DatabaseException
      *
@@ -54,11 +52,12 @@ class PdoAdapter implements AdapterInterface
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @throws DatabaseException
+     *
      * @return array
      */
     public function fetchOne($query, array $params = [])
@@ -79,11 +78,12 @@ class PdoAdapter implements AdapterInterface
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @throws DatabaseException
+     *
      * @return string
      */
     public function fetchValue($query, array $params = [])
@@ -109,7 +109,7 @@ class PdoAdapter implements AdapterInterface
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @throws DatabaseException
      *
@@ -129,8 +129,8 @@ class PdoAdapter implements AdapterInterface
 
     /**
      * @param string $query
-     * @param array $params
-     * @param int $columnIndex
+     * @param array  $params
+     * @param int    $columnIndex
      *
      * @throws DatabaseException
      *
@@ -150,7 +150,7 @@ class PdoAdapter implements AdapterInterface
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @throws DatabaseException
      *
@@ -165,7 +165,7 @@ class PdoAdapter implements AdapterInterface
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @throws DatabaseException
      *
@@ -180,7 +180,7 @@ class PdoAdapter implements AdapterInterface
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @throws InvalidQueryException
      *
@@ -225,7 +225,7 @@ class PdoAdapter implements AdapterInterface
 
     /**
      * @param string $driver
-     * @param array $options
+     * @param array  $options
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
@@ -260,7 +260,7 @@ class PdoAdapter implements AdapterInterface
 
     /**
      * @param string $driver
-     * @param array $options
+     * @param array  $options
      */
     protected function validateAdapterOptions($driver, array $options)
     {
@@ -363,7 +363,7 @@ class PdoAdapter implements AdapterInterface
 
     /**
      * @param string $dsn
-     * @param array $options
+     * @param array  $options
      */
     protected function createPdoConnection($dsn, array $options = [], $driverOptions = [])
     {

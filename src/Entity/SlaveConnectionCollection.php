@@ -75,7 +75,7 @@ class SlaveConnectionCollection
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isEmpty()
     {

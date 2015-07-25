@@ -51,9 +51,9 @@ class DatabaseManager
 
     /**
      * @param string $driver
-     * @param array $options
+     * @param array  $options
      * @param string $role
-     * @param int $weight
+     * @param int    $weight
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
@@ -87,7 +87,7 @@ class DatabaseManager
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @return array
      */
@@ -99,7 +99,7 @@ class DatabaseManager
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @return array
      */
@@ -111,7 +111,7 @@ class DatabaseManager
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @return string
      */
@@ -123,7 +123,7 @@ class DatabaseManager
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @return array
      */
@@ -135,8 +135,8 @@ class DatabaseManager
 
     /**
      * @param string $query
-     * @param array $params
-     * @param int $columnIndex
+     * @param array  $params
+     * @param int    $columnIndex
      *
      * @return array
      */
@@ -148,7 +148,7 @@ class DatabaseManager
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @return LazyFetch
      */
@@ -160,7 +160,7 @@ class DatabaseManager
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @return int
      */
@@ -205,8 +205,7 @@ class DatabaseManager
      */
     public function rollBack()
     {
-        if (!$this->hasActiveTransaction)
-        {
+        if (!$this->hasActiveTransaction) {
             return false;
         }
 
@@ -238,7 +237,7 @@ class DatabaseManager
 
     /**
      * @param string $driver
-     * @param array $options
+     * @param array  $options
      * @param string $role
      *
      * @return AdapterInterface
@@ -262,9 +261,9 @@ class DatabaseManager
 
     /**
      * @param string $driver
-     * @param array $options
+     * @param array  $options
      * @param string $role
-     * @param int $weight
+     * @param int    $weight
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *

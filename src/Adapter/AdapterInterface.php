@@ -8,14 +8,14 @@ interface AdapterInterface
 {
     /**
      * @param string $driver
-     * @param array $options
+     * @param array  $options
      * @param string $role
      */
     public function __construct($driver, array $options, $role);
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @return array
      */
@@ -23,7 +23,7 @@ interface AdapterInterface
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @return array
      */
@@ -31,7 +31,7 @@ interface AdapterInterface
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @return string
      */
@@ -39,7 +39,7 @@ interface AdapterInterface
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @return array
      */
@@ -47,8 +47,8 @@ interface AdapterInterface
 
     /**
      * @param string $query
-     * @param array $params
-     * @param int $columnIndex
+     * @param array  $params
+     * @param int    $columnIndex
      *
      * @return array
      */
@@ -56,7 +56,7 @@ interface AdapterInterface
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @return LazyFetch
      */
@@ -64,7 +64,7 @@ interface AdapterInterface
 
     /**
      * @param string $query
-     * @param array $params
+     * @param array  $params
      *
      * @return int
      */
