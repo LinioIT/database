@@ -30,23 +30,27 @@ run PHPUnit.
 ```php
 <?php
 
-	use Linio\Component\Database\DatabaseManager;
+use Linio\Component\Database\DatabaseManager;
 
-	$container['db'] = function() {
-		$db = new DatabaseManager();
-		$driverOptions = [
-			'host' => '127.0.0.1',
-			'port' => 3306,
-			'dbname' => 'test_db',
-			'username' => 'root',
-			'password' => '',
-		];
-		$db->addConnection(DatabaseManager::DRIVER_MYSQL, $driverOptions);
+$container['db'] = function() {
+    $db = new DatabaseManager();
+    $driverOptions = [
+        'host' => '127.0.0.1',
+        'port' => 3306,
+        'dbname' => 'test_db',
+        'username' => 'root',
+        'password' => '',
+        'pdo_attributes' => [
+            \PDO::ATTR_PERSISTENT => true,
+            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+        ],
+    ];
+    $db->addConnection(DatabaseManager::DRIVER_MYSQL, $driverOptions);
 
-		return $db;
-	}
+    return $db;
+}
 
-	$rows = $container['db']->fetchAll("SELECT * FROM `table` WHERE `field` = :value", ['value' => 'test']);
+$rows = $container['db']->fetchAll("SELECT * FROM `table` WHERE `field` = :value", ['value' => 'test']);
 
 ```
 
@@ -90,30 +94,30 @@ You can have multiple slave connections. The `weight` parameter is used to balan
 ```php
 <?php
 
-	use Linio\Component\Database\Entity\Connection;
+use Linio\Component\Database\Entity\Connection;
 
-    /**
-     * @return Connection[]
-     */
-    public function getConnections();
+/**
+ * @return Connection[]
+ */
+public function getConnections();
 
-    $connections = $db->getConnections();
+$connections = $db->getConnections();
 
-	var_dump($connections);
+var_dump($connections);
 
-	/*
-	array(2) {
-	  'master' =>
-	  class Linio\Component\Database\Entity\Connection
-	  'slave' =>
-	  array(2) {
-		[0] =>
-		class Linio\Component\Database\Entity\Connection
-		[1] =>
-		class Linio\Component\Database\Entity\Connection
-	  }
-	}
-	*/
+/*
+array(2) {
+  'master' =>
+  class Linio\Component\Database\Entity\Connection
+  'slave' =>
+  array(2) {
+    [0] =>
+    class Linio\Component\Database\Entity\Connection
+    [1] =>
+    class Linio\Component\Database\Entity\Connection
+  }
+}
+*/
 
 ```
 
@@ -122,36 +126,36 @@ You can have multiple slave connections. The `weight` parameter is used to balan
 ```php
 <?php
 
-    /**
-     * @param string $query
-     * @param array $params
-     *
-     * @return array
-     */
-    public function fetchAll($query, array $params = []);
+/**
+ * @param string $query
+ * @param array $params
+ *
+ * @return array
+ */
+public function fetchAll($query, array $params = []);
 
-    $rows = $db->fetchAll("SELECT `id`,`name` FROM `table` WHERE `id` > ?", [1]);
+$rows = $db->fetchAll("SELECT `id`,`name` FROM `table` WHERE `id` > ?", [1]);
 
-	var_dump($rows);
+var_dump($rows);
 
-	/*
-	array(2) {
-	  [0] =>
-	  array(2) {
-	    'id' =>
-	    string(1) "2"
-	    'name' =>
-	    string(6) "name 2"
-	  }
-	  [1] =>
-	  array(2) {
-	    'id' =>
-	    string(1) "3"
-	    'name' =>
-	    string(6) "name 3"
-	  }
-	}
-	*/
+/*
+array(2) {
+  [0] =>
+  array(2) {
+    'id' =>
+    string(1) "2"
+    'name' =>
+    string(6) "name 2"
+  }
+  [1] =>
+  array(2) {
+    'id' =>
+    string(1) "3"
+    'name' =>
+    string(6) "name 3"
+  }
+}
+*/
 
 ```
 
@@ -160,26 +164,26 @@ You can have multiple slave connections. The `weight` parameter is used to balan
 ```php
 <?php
 
-    /**
-     * @param string $query
-     * @param array $params
-     *
-     * @return array
-     */
-    public function fetchOne($query, array $params = []);
+/**
+ * @param string $query
+ * @param array $params
+ *
+ * @return array
+ */
+public function fetchOne($query, array $params = []);
 
-    $row = $db->fetchOne("SELECT `id`,`name` FROM `table` WHERE `id` = :id", ['id' => 1]);
+$row = $db->fetchOne("SELECT `id`,`name` FROM `table` WHERE `id` = :id", ['id' => 1]);
 
-	var_dump($row);
+var_dump($row);
 
-	/*
-	array(2) {
-		'id' =>
-		string(1) "1"
-		'name' =>
-		string(6) "name 1"
-	}
-	*/
+/*
+array(2) {
+    'id' =>
+    string(1) "1"
+    'name' =>
+    string(6) "name 1"
+}
+*/
 
 
 ```
@@ -189,21 +193,21 @@ You can have multiple slave connections. The `weight` parameter is used to balan
 ```php
 <?php
 
-    /**
-     * @param string $query
-     * @param array $params
-     *
-     * @return string
-     */
-    public function fetchValue($query, array $params = []);
+/**
+ * @param string $query
+ * @param array $params
+ *
+ * @return string
+ */
+public function fetchValue($query, array $params = []);
 
-    $name = $db->fetchValue("SELECT `name` FROM `table` WHERE `id` = :id", ['id' => 1]);
+$name = $db->fetchValue("SELECT `name` FROM `table` WHERE `id` = :id", ['id' => 1]);
 
-	var_dump($row);
+var_dump($row);
 
-	/*
-	string(6) "name 1"
-	*/
+/*
+string(6) "name 1"
+*/
 
 ```
 
@@ -212,26 +216,26 @@ You can have multiple slave connections. The `weight` parameter is used to balan
 ```php
 <?php
 
-     /**
-     * @param string $query
-     * @param array $params
-     *
-     * @return array
-     */
-    public function fetchKeyPairs($query, array $params = []);
+ /**
+ * @param string $query
+ * @param array $params
+ *
+ * @return array
+ */
+public function fetchKeyPairs($query, array $params = []);
 
-    $keyPairs = $db->fetchKeyPairs("SELECT `id`,`name` FROM `table` WHERE `id` > :id", ['id' => 1]);
+$keyPairs = $db->fetchKeyPairs("SELECT `id`,`name` FROM `table` WHERE `id` > :id", ['id' => 1]);
 
-	var_dump($keyPairs);
+var_dump($keyPairs);
 
-	/*
-	array(2) {
-		'2' =>
-		string(6) "name 2"
-		'3' =>
-		string(6) "name 3"
-	}
-	*/
+/*
+array(2) {
+    '2' =>
+    string(6) "name 2"
+    '3' =>
+    string(6) "name 3"
+}
+*/
 
 ```
 
@@ -240,27 +244,27 @@ You can have multiple slave connections. The `weight` parameter is used to balan
 ```php
 <?php
 
-    /**
-     * @param string $query
-     * @param array $params
-     * @param int $columnIndex
-     *
-     * @return array
-     */
-    public function fetchColumn($query, array $params = [], $columnIndex = 0);
+/**
+ * @param string $query
+ * @param array $params
+ * @param int $columnIndex
+ *
+ * @return array
+ */
+public function fetchColumn($query, array $params = [], $columnIndex = 0);
 
-    $names = $db->fetchColumn("SELECT `id`,`name` FROM `table` WHERE `id` > :id", ['id' => 1], 1);
+$names = $db->fetchColumn("SELECT `id`,`name` FROM `table` WHERE `id` > :id", ['id' => 1], 1);
 
-	var_dump($names);
+var_dump($names);
 
-	/*
-	array(2) {
-		[0] =>
-		string(6) "name 2"
-		[1] =>
-		string(6) "name 3"
-	}
-	*/
+/*
+array(2) {
+    [0] =>
+    string(6) "name 2"
+    [1] =>
+    string(6) "name 3"
+}
+*/
 
 ```
 
@@ -269,21 +273,21 @@ You can have multiple slave connections. The `weight` parameter is used to balan
 ```php
 <?php
 
-	use Linio\Component\Database\Entity\LazyFetch;
+use Linio\Component\Database\Entity\LazyFetch;
 
-    /**
-     * @param string $query
-     * @param array $params
-     *
-     * @return LazyFetch
-     */
-    public function fetchLazy($query, array $params = []);
+/**
+ * @param string $query
+ * @param array $params
+ *
+ * @return LazyFetch
+ */
+public function fetchLazy($query, array $params = []);
 
-    $lazyFetch = $db->fetchLazy("SELECT `id`,`name` FROM `table` WHERE `id` > ?", [1]);
+$lazyFetch = $db->fetchLazy("SELECT `id`,`name` FROM `table` WHERE `id` > ?", [1]);
 
-	while ($row = $lazyFetch->fetch()) {
-		$name = $row['name'];
-	}
+while ($row = $lazyFetch->fetch()) {
+    $name = $row['name'];
+}
 
 ```
 
@@ -294,29 +298,29 @@ In this example, when this `while` loop reached the end of the result set, the `
 ```php
 <?php
 
-    /**
-     * @param string $query
-     * @param array $params
-     *
-     * @return int
-     */
-    public function execute($query, array $params = []);
+/**
+ * @param string $query
+ * @param array $params
+ *
+ * @return int
+ */
+public function execute($query, array $params = []);
 
-    $affectedRowsInsert = $db->execute("INSERT INTO `table` VALUES(:id, :name)", ['id' => 10, 'name' => 'test_name']);
+$affectedRowsInsert = $db->execute("INSERT INTO `table` VALUES(:id, :name)", ['id' => 10, 'name' => 'test_name']);
 
-	var_dump($affectedRowsInsert);
+var_dump($affectedRowsInsert);
 
-	/*
-	int(1)
-	*/
+/*
+int(1)
+*/
 
-    $affectedRowsUpdate = $db->execute("UPDATE `table` SET `name` = :name", ['name' => 'test_name']);
+$affectedRowsUpdate = $db->execute("UPDATE `table` SET `name` = :name", ['name' => 'test_name']);
 
-	var_dump($affectedRowsUpdate);
+var_dump($affectedRowsUpdate);
 
-	/*
-	int(3)
-	*/
+/*
+int(3)
+*/
 
 
 ```
@@ -351,11 +355,12 @@ Reasons:
 
 Adapter options:
 
-- `host`
-- `port`
-- `dbname`
-- `username`
-- `password`
+- `host` string
+- `port` int
+- `dbname` string
+- `username` string
+- `password` string
+- `pdo_attributes` array *optional*
 
 ----------
 
@@ -363,11 +368,12 @@ Adapter options:
 
 Adapter options:
 
-- `host`
-- `port`
-- `dbname`
-- `username`
-- `password`
+- `host` string
+- `port` int
+- `dbname` string
+- `username` string
+- `password` string
+- `pdo_attributes` array *optional*
 
 
 ----------
@@ -384,10 +390,11 @@ Adapter options:
 
 Adapter options:
 
-- `host`
-- `port`
-- `dbname`
-- `username`
-- `password`
+- `host` string
+- `port` int
+- `dbname` string
+- `username` string
+- `password` string
+- `pdo_attributes` array *optional*
 
 ----------

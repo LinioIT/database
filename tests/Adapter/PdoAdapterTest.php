@@ -3,6 +3,7 @@
 namespace Linio\Component\Database\Adapter;
 
 use Linio\Component\Database\DatabaseManager;
+use PHPUnit_Framework_Assert;
 
 /**
  * @constant TEST_DATABASE_HOST
@@ -50,6 +51,25 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
     public function testIsConstructing()
     {
         $this->assertInstanceOf('Linio\Component\Database\Adapter\PdoAdapter', $this->adapter);
+    }
+
+    public function testIsSettingPdoAttributes()
+    {
+        $testOptions = [
+            'pdo_attributes' => [
+                \PDO::ATTR_PERSISTENT => true,
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING,
+            ]
+        ];
+
+        $driverOptions = $this->driverOptions + $testOptions;
+
+        $testAdapter = new PdoAdapter(DatabaseManager::DRIVER_MYSQL, $driverOptions, DatabaseManager::ROLE_MASTER);
+
+        /* @var $adapterPdo \PDO */
+        $adapterPdo = PHPUnit_Framework_Assert::readAttribute($testAdapter, 'pdo');
+        $this->assertTrue($adapterPdo->getAttribute(\PDO::ATTR_PERSISTENT));
+        $this->assertEquals(\PDO::ERRMODE_WARNING, $adapterPdo->getAttribute(\PDO::ATTR_ERRMODE));
     }
 
     public function testIsFetchingAllWithoutParams()
