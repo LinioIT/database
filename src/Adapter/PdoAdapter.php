@@ -254,8 +254,6 @@ class PdoAdapter implements AdapterInterface
             default:
                 throw new DatabaseConnectionException('Unknown PDO Driver: ' . $driver);
         }
-
-        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
 
     /**
@@ -367,6 +365,15 @@ class PdoAdapter implements AdapterInterface
      */
     protected function createPdoConnection($dsn, array $options = [], $driverOptions = [])
     {
+        $defaultPdoOptions = [
+            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+        ];
+        $driverOptions = $defaultPdoOptions + $driverOptions;
+
+        if (isset($options['pdo_attributes']) && is_array($options['pdo_attributes'])) {
+            $driverOptions = $options['pdo_attributes'] + $driverOptions;
+        }
+
         try {
             if (isset($options['username']) && isset($options['password'])) {
                 $this->pdo = new \PDO($dsn, $options['username'], $options['password'], $driverOptions);
