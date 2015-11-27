@@ -3,6 +3,7 @@ build/
 vendor/
 bin/
 composer.phar
+composer.lock
 phpunit.xml
 cache.properties
 coverage.xml

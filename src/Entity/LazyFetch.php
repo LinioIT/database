@@ -1,28 +1,25 @@
 <?php
 
+declare (strict_types = 1);
+
 namespace Linio\Component\Database\Entity;
 
 use Linio\Component\Database\Exception\DatabaseException;
+use PDOStatement;
 
 class LazyFetch
 {
     /**
-     * @var \PDOStatement
+     * @var PDOStatement
      */
     protected $pdoStatement;
 
-    /**
-     * @param \PDOStatement $pdoStatement
-     */
-    public function __construct(\PDOStatement $pdoStatement)
+    public function __construct(PDOStatement $pdoStatement)
     {
         $this->pdoStatement = $pdoStatement;
     }
 
-    /**
-     * @return array
-     */
-    public function fetch()
+    public function fetch(): array
     {
         try {
             $row = $this->pdoStatement->fetch(\PDO::FETCH_ASSOC);

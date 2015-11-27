@@ -1,5 +1,7 @@
 <?php
 
+declare (strict_types = 1);
+
 namespace Linio\Component\Database\Adapter;
 
 use Linio\Component\Database\DatabaseManager;
@@ -7,43 +9,31 @@ use Linio\Component\Database\Entity\LazyFetch;
 use Linio\Component\Database\Exception\DatabaseConnectionException;
 use Linio\Component\Database\Exception\DatabaseException;
 use Linio\Component\Database\Exception\InvalidQueryException;
+use PDO;
+use PDOException;
+use PDOStatement;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- */
 class PdoAdapter implements AdapterInterface
 {
     /**
-     * @var \PDO
+     * @var PDO
      */
     protected $pdo;
 
-    // @codingStandardsIgnoreStart
-    /**
-     * @param string $driver  ;
-     * @param array  $options
-     * @param string $role
-     */
-    public function __construct($driver, array $options, $role)
+    public function __construct(string $driver, array $options, string $role)
     {
         $this->setPdo($driver, $options);
     }
-    // @codingStandardsIgnoreEnd
 
     /**
-     * @param string $query
-     * @param array  $params
-     *
      * @throws DatabaseException
-     *
-     * @return array
      */
-    public function fetchAll($query, array $params = [])
+    public function fetchAll(string $query, array $params = []): array
     {
         $stmt = $this->executeStatement($query, $params);
         try {
-            $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\PDOException $e) {
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
             throw new DatabaseException($e->getMessage(), $e->getCode(), $e);
         }
 
@@ -51,21 +41,14 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @param string $query
-     * @param array  $params
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
      * @throws DatabaseException
-     *
-     * @return array
      */
-    public function fetchOne($query, array $params = [])
+    public function fetchOne(string $query, array $params = []): array
     {
         $stmt = $this->executeStatement($query, $params);
         try {
-            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\PDOException $e) {
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
             throw new DatabaseException($e->getMessage(), $e->getCode(), $e);
         }
 
@@ -77,21 +60,14 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @param string $query
-     * @param array  $params
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
      * @throws DatabaseException
-     *
-     * @return string
      */
-    public function fetchValue($query, array $params = [])
+    public function fetchValue(string $query, array $params = [])
     {
         $stmt = $this->executeStatement($query, $params);
         try {
-            $values = $stmt->fetch(\PDO::FETCH_NUM);
-        } catch (\PDOException $e) {
+            $values = $stmt->fetch(PDO::FETCH_NUM);
+        } catch (PDOException $e) {
             throw new DatabaseException($e->getMessage(), $e->getCode(), $e);
         }
 
@@ -108,19 +84,14 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @param string $query
-     * @param array  $params
-     *
      * @throws DatabaseException
-     *
-     * @return array
      */
-    public function fetchKeyPairs($query, array $params = [])
+    public function fetchKeyPairs(string $query, array $params = []): array
     {
         $stmt = $this->executeStatement($query, $params);
         try {
-            $keyPairs = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
-        } catch (\PDOException $e) {
+            $keyPairs = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+        } catch (PDOException $e) {
             throw new DatabaseException($e->getMessage(), $e->getCode(), $e);
         }
 
@@ -128,20 +99,14 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @param string $query
-     * @param array  $params
-     * @param int    $columnIndex
-     *
      * @throws DatabaseException
-     *
-     * @return array
      */
-    public function fetchColumn($query, array $params = [], $columnIndex = 0)
+    public function fetchColumn(string $query, array $params = [], int $columnIndex = 0): array
     {
         $stmt = $this->executeStatement($query, $params);
         try {
-            $rows = $stmt->fetchAll(\PDO::FETCH_COLUMN, $columnIndex);
-        } catch (\PDOException $e) {
+            $rows = $stmt->fetchAll(PDO::FETCH_COLUMN, $columnIndex);
+        } catch (PDOException $e) {
             throw new DatabaseException($e->getMessage(), $e->getCode(), $e);
         }
 
@@ -149,14 +114,9 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @param string $query
-     * @param array  $params
-     *
      * @throws DatabaseException
-     *
-     * @return LazyFetch
      */
-    public function fetchLazy($query, array $params = [])
+    public function fetchLazy(string $query, array $params = []): LazyFetch
     {
         $stmt = $this->executeStatement($query, $params);
 
@@ -164,14 +124,9 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @param string $query
-     * @param array  $params
-     *
      * @throws DatabaseException
-     *
-     * @return int
      */
-    public function execute($query, array $params = [])
+    public function execute(string $query, array $params = []): int
     {
         $stmt = $this->executeStatement($query, $params);
 
@@ -179,19 +134,14 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @param string $query
-     * @param array  $params
-     *
      * @throws InvalidQueryException
-     *
-     * @return \PDOStatement
      */
-    protected function executeStatement($query, array $params)
+    protected function executeStatement(string $query, array $params): PDOStatement
     {
         try {
             $stmt = $this->pdo->prepare($query);
             $stmt->execute($params);
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             throw new InvalidQueryException($e->getMessage(), 0, $e);
         }
 
@@ -213,25 +163,15 @@ class PdoAdapter implements AdapterInterface
         $this->pdo->rollBack();
     }
 
-    /**
-     * @param string|null $name
-     *
-     * @return string
-     */
-    public function getLastInsertId($name = null)
+    public function getLastInsertId(string $name = null)
     {
         return $this->pdo->lastInsertId($name);
     }
 
     /**
-     * @param string $driver
-     * @param array  $options
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
      * @throws DatabaseConnectionException
      */
-    protected function setPdo($driver, array $options)
+    protected function setPdo(string $driver, array $options)
     {
         $this->validateAdapterOptions($driver, $options);
         switch ($driver) {
@@ -256,11 +196,7 @@ class PdoAdapter implements AdapterInterface
         }
     }
 
-    /**
-     * @param string $driver
-     * @param array  $options
-     */
-    protected function validateAdapterOptions($driver, array $options)
+    protected function validateAdapterOptions(string $driver, array $options)
     {
         switch ($driver) {
             case DatabaseManager::DRIVER_MYSQL:
@@ -275,22 +211,16 @@ class PdoAdapter implements AdapterInterface
         }
     }
 
-    /**
-     * @param array $options
-     */
     protected function setMySqlConnection(array $options)
     {
         $dsn = sprintf('mysql:host=%s;port=%s;dbname=%s', $options['host'], $options['port'], $options['dbname']);
         $mySqlOptions = [
-            \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
         ];
 
         $this->createPdoConnection($dsn, $options, $mySqlOptions);
     }
 
-    /**
-     * @param array $options
-     */
     protected function setPgSqlConnection(array $options)
     {
         $dsn = sprintf(
@@ -305,9 +235,6 @@ class PdoAdapter implements AdapterInterface
         $this->createPdoConnection($dsn, $options);
     }
 
-    /**
-     * @param array $options
-     */
     protected function setSqliteConnection(array $options)
     {
         $dsn = sprintf('sqlite:%s', $options['filepath']);
@@ -315,9 +242,6 @@ class PdoAdapter implements AdapterInterface
         $this->createPdoConnection($dsn);
     }
 
-    /**
-     * @param array $options
-     */
     protected function setSqlServerConnection(array $options)
     {
         $dsn = sprintf('sqlsrv:Server=%s,%s;Database=%s', $options['host'], $options['port'], $options['dbname']);
@@ -325,11 +249,6 @@ class PdoAdapter implements AdapterInterface
         $this->createPdoConnection($dsn, $options);
     }
 
-    /**
-     * @param array $options
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
     protected function validateStandardDatabaseOptions(array $options)
     {
         if (!isset($options['host'])) {
@@ -349,9 +268,6 @@ class PdoAdapter implements AdapterInterface
         }
     }
 
-    /**
-     * @param array $options
-     */
     protected function validateSqliteOptions(array $options)
     {
         if (!isset($options['filepath'])) {
@@ -359,14 +275,10 @@ class PdoAdapter implements AdapterInterface
         }
     }
 
-    /**
-     * @param string $dsn
-     * @param array  $options
-     */
-    protected function createPdoConnection($dsn, array $options = [], $driverOptions = [])
+    protected function createPdoConnection(string $dsn, array $options = [], array $driverOptions = [])
     {
         $defaultPdoOptions = [
-            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
         $driverOptions = $defaultPdoOptions + $driverOptions;
 
@@ -376,11 +288,11 @@ class PdoAdapter implements AdapterInterface
 
         try {
             if (isset($options['username']) && isset($options['password'])) {
-                $this->pdo = new \PDO($dsn, $options['username'], $options['password'], $driverOptions);
+                $this->pdo = new PDO($dsn, $options['username'], $options['password'], $driverOptions);
             } else {
-                $this->pdo = new \PDO($dsn);
+                $this->pdo = new PDO($dsn);
             }
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             throw new DatabaseConnectionException($e->getMessage(), $e->getCode(), $e);
         }
     }
