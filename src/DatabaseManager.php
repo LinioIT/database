@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Linio\Component\Database;
 
@@ -8,9 +9,6 @@ use Linio\Component\Database\Entity\LazyFetch;
 use Linio\Component\Database\Entity\SlaveConnectionCollection;
 use Linio\Component\Database\Exception\DatabaseConnectionException;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- */
 class DatabaseManager
 {
     // Drivers
@@ -36,7 +34,7 @@ class DatabaseManager
     /**
      * @var array
      */
-    protected $adapterOptions;
+    protected $adapterOptions = [];
 
     /**
      * @var bool
@@ -49,17 +47,7 @@ class DatabaseManager
         $this->slaveConnections = new SlaveConnectionCollection();
     }
 
-    /**
-     * @param string $driver
-     * @param array  $options
-     * @param string $role
-     * @param int    $weight
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
-     *
-     * @return bool
-     */
-    public function addConnection($driver, array $options, $role = self::ROLE_MASTER, $weight = 1)
+    public function addConnection(string $driver, array $options, string $role = self::ROLE_MASTER, int $weight = 1): bool
     {
         $this->checkValidRole($role);
         $this->checkValidDriver($driver);
@@ -77,7 +65,7 @@ class DatabaseManager
     /**
      * @return Connection[]
      */
-    public function getConnections()
+    public function getConnections(): array
     {
         return [
             self::ROLE_MASTER => $this->masterConnection,
@@ -85,95 +73,49 @@ class DatabaseManager
         ];
     }
 
-    /**
-     * @param string $query
-     * @param array  $params
-     *
-     * @return array
-     */
-    public function fetchAll($query, array $params = [])
+    public function fetchAll(string $query, array $params = []): array
     {
         return $this->getReadAdapter()
             ->fetchAll($query, $params);
     }
 
-    /**
-     * @param string $query
-     * @param array  $params
-     *
-     * @return array
-     */
-    public function fetchOne($query, array $params = [])
+    public function fetchOne(string $query, array $params = []): array
     {
         return $this->getReadAdapter()
             ->fetchOne($query, $params);
     }
 
-    /**
-     * @param string $query
-     * @param array  $params
-     *
-     * @return string
-     */
-    public function fetchValue($query, array $params = [])
+    public function fetchValue(string $query, array $params = [])
     {
         return $this->getReadAdapter()
             ->fetchValue($query, $params);
     }
 
-    /**
-     * @param string $query
-     * @param array  $params
-     *
-     * @return array
-     */
-    public function fetchKeyPairs($query, array $params = [])
+    public function fetchKeyPairs(string $query, array $params = []): array
     {
         return $this->getReadAdapter()
             ->fetchKeyPairs($query, $params);
     }
 
-    /**
-     * @param string $query
-     * @param array  $params
-     * @param int    $columnIndex
-     *
-     * @return array
-     */
-    public function fetchColumn($query, array $params = [], $columnIndex = 0)
+    public function fetchColumn(string $query, array $params = [], int $columnIndex = 0): array
     {
         return $this->getReadAdapter()
             ->fetchColumn($query, $params, $columnIndex);
     }
 
-    /**
-     * @param string $query
-     * @param array  $params
-     *
-     * @return LazyFetch
-     */
-    public function fetchLazy($query, array $params = [])
+    public function fetchLazy(string $query, array $params = []): LazyFetch
     {
         return $this->getReadAdapter()
             ->fetchLazy($query, $params);
     }
 
-    /**
-     * @param string $query
-     * @param array  $params
-     *
-     * @return int
-     */
-    public function execute($query, array $params = [])
+    public function execute(string $query, array $params = []): int
     {
         return $this->getWriteAdapter()
             ->execute($query, $params);
     }
 
-    /**
-     * @return bool
-     */
-    public function beginTransaction()
+    public function beginTransaction(): bool
     {
         if ($this->hasActiveTransaction) {
             return false;
@@ -185,10 +127,7 @@ class DatabaseManager
         return true;
     }
 
-    /**
-     * @return bool
-     */
-    public function commit()
+    public function commit(): bool
     {
         if (!$this->hasActiveTransaction) {
             return false;
@@ -200,10 +139,7 @@ class DatabaseManager
         return true;
     }
 
-    /**
-     * @return bool
-     */
-    public function rollBack()
+    public function rollBack(): bool
     {
         if (!$this->hasActiveTransaction) {
             return false;
@@ -215,12 +151,7 @@ class DatabaseManager
         return true;
     }
 
-    /**
-     * @param string|null $name
-     *
-     * @return mixed
-     */
-    public function getLastInsertId($name = null)
+    public function getLastInsertId(string $name = null)
     {
         return $this->getWriteAdapter()->getLastInsertId($name);
     }
@@ -235,14 +166,7 @@ class DatabaseManager
         ];
     }
 
-    /**
-     * @param string $driver
-     * @param array  $options
-     * @param string $role
-     *
-     * @return AdapterInterface
-     */
-    protected function createAdapter($driver, array $options, $role = self::ROLE_MASTER)
+    protected function createAdapter(string $driver, array $options, string $role = self::ROLE_MASTER): AdapterInterface
     {
         $driverAdapterClass = sprintf('%s\\Adapter\\%s', __NAMESPACE__, $this->adapterOptions[$driver]);
 
@@ -259,17 +183,7 @@ class DatabaseManager
         }
     }
 
-    /**
-     * @param string $driver
-     * @param array  $options
-     * @param string $role
-     * @param int    $weight
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
-     *
-     * @return Connection
-     */
-    protected function createConnection($driver, array $options = [], $role = self::ROLE_MASTER, $weight = 1)
+    protected function createConnection(string $driver, array $options = [], string $role = self::ROLE_MASTER, int $weight = 1): Connection
     {
         $connection = new Connection();
         $connection->setDriver($driver);
@@ -282,11 +196,9 @@ class DatabaseManager
     }
 
     /**
-     * @param string $driver
-     *
      * @throws DatabaseConnectionException
      */
-    protected function checkValidDriver($driver)
+    protected function checkValidDriver(string $driver)
     {
         if (!in_array($driver, [self::DRIVER_MYSQL, self::DRIVER_PGSQL, self::DRIVER_SQLITE, self::DRIVER_SQLSRV])) {
             throw new DatabaseConnectionException('Invalid driver: ' . $driver);
@@ -294,11 +206,9 @@ class DatabaseManager
     }
 
     /**
-     * @param string $role
-     *
      * @throws DatabaseConnectionException
      */
-    protected function checkValidRole($role)
+    protected function checkValidRole(string $role)
     {
         if ($role == self::ROLE_MASTER) {
             $this->checkMasterExists();
@@ -307,10 +217,7 @@ class DatabaseManager
         }
     }
 
-    /**
-     * @return AdapterInterface
-     */
-    protected function getReadAdapter()
+    protected function getReadAdapter(): AdapterInterface
     {
         if ($this->hasActiveTransaction || $this->slaveConnections->isEmpty()) {
             return $this->getWriteAdapter();
@@ -319,10 +226,7 @@ class DatabaseManager
         return $this->slaveConnections->getAdapter();
     }
 
-    /**
-     * @return AdapterInterface
-     */
-    protected function getWriteAdapter()
+    protected function getWriteAdapter(): AdapterInterface
     {
         return $this->masterConnection->getAdapter();
     }

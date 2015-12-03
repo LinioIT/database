@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Linio\Component\Database;
 
@@ -9,17 +10,11 @@ trait DatabaseAware
      */
     protected $database;
 
-    /**
-     * @return DatabaseManager
-     */
-    public function getDatabase()
+    public function getDatabase(): DatabaseManager
     {
         return $this->database;
     }
 
-    /**
-     * @param DatabaseManager $database
-     */
     public function setDatabase(DatabaseManager $database)
     {
         $this->database = $database;
