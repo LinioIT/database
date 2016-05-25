@@ -124,6 +124,14 @@ class PdoAdapter implements AdapterInterface
      */
     public function execute(string $query, array $params = []): int
     {
+        if (empty($params)) {
+            try {
+                return $this->pdo->exec($query);
+            } catch (\PDOException $e) {
+                throw new InvalidQueryException($e->getMessage(), 0, $e);
+            }
+        }
+
         $stmt = $this->executeStatement($query, $params);
 
         return $stmt->rowCount();
