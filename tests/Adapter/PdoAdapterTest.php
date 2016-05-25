@@ -50,7 +50,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testIsConstructing()
     {
-        $this->assertInstanceOf('Linio\Component\Database\Adapter\PdoAdapter', $this->adapter);
+        $this->assertInstanceOf(PdoAdapter::class, $this->adapter);
     }
 
     public function testIsSettingPdoAttributes()
@@ -254,6 +254,24 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(0, $actual);
     }
 
+    public function testIsExecutingMultipleStatementsWithoutEmulatePrepares()
+    {
+        $driverOptions = $this->driverOptions;
+        $driverOptions['pdo_attributes'] = [
+            \PDO::ATTR_EMULATE_PREPARES => false,
+        ];
+
+        $this->createDatabaseFixture();
+        $this->adapter = new PdoAdapter(DatabaseManager::DRIVER_MYSQL, $driverOptions, DatabaseManager::ROLE_MASTER);
+
+        $actual = $this->adapter->execute("
+          DELETE FROM `departments`;
+          INSERT INTO `departments` (`dept_no`, `dept_name`) VALUES ('d010', 'Test Dept 1'), ('d011', 'Test Dept 2');
+        ");
+
+        $this->assertEquals(9, $actual);
+    }
+
     /**
      * @expectedException \Linio\Component\Database\Exception\InvalidQueryException
      */
@@ -262,13 +280,13 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
         $this->adapter->execute("UPDATE `nop` SET `dept_name` = ? WHERE `dept_no` = ?", ['Test Dept', 'd010']);
     }
 
-    public function testIsCreatingandCommitingTransaction()
+    public function testIsCreatingAndCommitingTransaction()
     {
         $this->assertTrue($this->pdo->beginTransaction());
         $this->assertTrue($this->pdo->commit());
     }
 
-    public function testIsCreatingandRollingBackTransaction()
+    public function testIsCreatingAndRollingBackTransaction()
     {
         $this->assertTrue($this->pdo->beginTransaction());
         $this->assertTrue($this->pdo->rollBack());
@@ -277,7 +295,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \PDOException
      */
-    public function testIsNotCommitingTransactionWithoutCreating()
+    public function testIsNotCommittingTransactionWithoutCreating()
     {
         $this->pdo->commit();
     }
