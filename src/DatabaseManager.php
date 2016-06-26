@@ -73,39 +73,39 @@ class DatabaseManager
         ];
     }
 
-    public function fetchAll(string $query, array $params = []): array
+    public function fetchAll(string $query, array $params = [], bool $forceMasterConnection = false): array
     {
-        return $this->getReadAdapter()
+        return $this->getReadAdapter($forceMasterConnection)
             ->fetchAll($query, $params);
     }
 
-    public function fetchOne(string $query, array $params = []): array
+    public function fetchOne(string $query, array $params = [], bool $forceMasterConnection = false): array
     {
-        return $this->getReadAdapter()
+        return $this->getReadAdapter($forceMasterConnection)
             ->fetchOne($query, $params);
     }
 
-    public function fetchValue(string $query, array $params = [])
+    public function fetchValue(string $query, array $params = [], bool $forceMasterConnection = false)
     {
-        return $this->getReadAdapter()
+        return $this->getReadAdapter($forceMasterConnection)
             ->fetchValue($query, $params);
     }
 
-    public function fetchKeyPairs(string $query, array $params = []): array
+    public function fetchKeyPairs(string $query, array $params = [], bool $forceMasterConnection = false): array
     {
-        return $this->getReadAdapter()
+        return $this->getReadAdapter($forceMasterConnection)
             ->fetchKeyPairs($query, $params);
     }
 
-    public function fetchColumn(string $query, array $params = [], int $columnIndex = 0): array
+    public function fetchColumn(string $query, array $params = [], int $columnIndex = 0, bool $forceMasterConnection = false): array
     {
-        return $this->getReadAdapter()
+        return $this->getReadAdapter($forceMasterConnection)
             ->fetchColumn($query, $params, $columnIndex);
     }
 
-    public function fetchLazy(string $query, array $params = []): LazyFetch
+    public function fetchLazy(string $query, array $params = [], bool $forceMasterConnection = false): LazyFetch
     {
-        return $this->getReadAdapter()
+        return $this->getReadAdapter($forceMasterConnection)
             ->fetchLazy($query, $params);
     }
 
@@ -217,9 +217,9 @@ class DatabaseManager
         }
     }
 
-    protected function getReadAdapter(): AdapterInterface
+    protected function getReadAdapter(bool $forceMasterConnection): AdapterInterface
     {
-        if ($this->hasActiveTransaction || $this->slaveConnections->isEmpty()) {
+        if ($forceMasterConnection || $this->hasActiveTransaction || $this->slaveConnections->isEmpty()) {
             return $this->getWriteAdapter();
         }
 
