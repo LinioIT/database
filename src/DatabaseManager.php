@@ -39,12 +39,23 @@ class DatabaseManager
     /**
      * @var bool
      */
+    protected $safeMode;
+
+    /**
+     * @var bool
+     */
     protected $hasActiveTransaction = false;
 
-    public function __construct()
+    /**
+     * @var bool
+     */
+    protected $hasUsedWriteAdapter = false;
+
+    public function __construct($safeMode = true)
     {
         $this->setAdapterOptions();
         $this->slaveConnections = new SlaveConnectionCollection();
+        $this->safeMode = $safeMode;
     }
 
     public function addConnection(string $driver, array $options, string $role = self::ROLE_MASTER, int $weight = 1): bool
@@ -219,6 +230,10 @@ class DatabaseManager
 
     protected function getReadAdapter(bool $forceMasterConnection): AdapterInterface
     {
+        if ($this->safeMode && $this->hasUsedWriteAdapter) {
+            return $this->getWriteAdapter();
+        }
+
         if ($forceMasterConnection || $this->hasActiveTransaction || $this->slaveConnections->isEmpty()) {
             return $this->getWriteAdapter();
         }
@@ -228,6 +243,8 @@ class DatabaseManager
 
     protected function getWriteAdapter(): AdapterInterface
     {
+        $this->hasUsedWriteAdapter = true;
+
         return $this->masterConnection->getAdapter();
     }
 }

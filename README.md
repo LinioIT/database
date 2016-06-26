@@ -62,6 +62,22 @@ You can have multiple slave connections. The `weight` parameter is used to balan
 
 In order to force a read query to use the master connection, use the parameter `forceMasterConnection` when using the `fetch` methods. 
 
+
+## Safe Mode
+
+When you use read replicas to improve the performance in your database, in a master-slave setup, the replication lag between the instances may cause some issues when you try to read data that you have recently modified.
+
+The safe mode option guarantees that, once you have used the master connection to issue a query, every query from this moment on will use the same connection for reads.
+
+To prevent replication lag issues, this library uses the safe mode by default. To override this behavior, set the `$safeMode` parameter to false when instantiating the `DatabaseManager` object.
+
+```php
+<?php
+
+    $db = new DatabaseManager(false);
+
+```
+
 ## Methods
 
 ### `addConnection`
