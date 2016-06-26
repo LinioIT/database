@@ -60,6 +60,8 @@ For performance reasons, you might want to use slave databases for read queries 
 
 You can have multiple slave connections. The `weight` parameter is used to balance the queries among the slaves. Database servers capable of handling more load should have higher `weight` paramaters.
 
+In order to force a read query to use the master connection, use the parameter `forceMasterConnection` when using the `fetch` methods. 
+
 ## Methods
 
 ### `addConnection`
@@ -129,10 +131,11 @@ array(2) {
 /**
  * @param string $query
  * @param array $params
+ * @param bool $forceMasterConnection
  *
  * @return array
  */
-public function fetchAll($query, array $params = []);
+public function fetchAll($query, array $params = [], bool $forceMasterConnection = false);
 
 $rows = $db->fetchAll("SELECT `id`,`name` FROM `table` WHERE `id` > ?", [1]);
 
@@ -167,10 +170,11 @@ array(2) {
 /**
  * @param string $query
  * @param array $params
+ * @param bool $forceMasterConnection
  *
  * @return array
  */
-public function fetchOne($query, array $params = []);
+public function fetchOne($query, array $params = [], bool $forceMasterConnection = false);
 
 $row = $db->fetchOne("SELECT `id`,`name` FROM `table` WHERE `id` = :id", ['id' => 1]);
 
@@ -196,10 +200,11 @@ array(2) {
 /**
  * @param string $query
  * @param array $params
+ * @param bool $forceMasterConnection
  *
  * @return string
  */
-public function fetchValue($query, array $params = []);
+public function fetchValue($query, array $params = [], bool $forceMasterConnection = false);
 
 $name = $db->fetchValue("SELECT `name` FROM `table` WHERE `id` = :id", ['id' => 1]);
 
@@ -219,10 +224,11 @@ string(6) "name 1"
  /**
  * @param string $query
  * @param array $params
+ * @param bool $forceMasterConnection
  *
  * @return array
  */
-public function fetchKeyPairs($query, array $params = []);
+public function fetchKeyPairs($query, array $params = [], bool $forceMasterConnection = false);
 
 $keyPairs = $db->fetchKeyPairs("SELECT `id`,`name` FROM `table` WHERE `id` > :id", ['id' => 1]);
 
@@ -248,10 +254,11 @@ array(2) {
  * @param string $query
  * @param array $params
  * @param int $columnIndex
+ * @param bool $forceMasterConnection
  *
  * @return array
  */
-public function fetchColumn($query, array $params = [], $columnIndex = 0);
+public function fetchColumn($query, array $params = [], $columnIndex = 0, bool $forceMasterConnection = false);
 
 $names = $db->fetchColumn("SELECT `id`,`name` FROM `table` WHERE `id` > :id", ['id' => 1], 1);
 
@@ -278,10 +285,11 @@ use Linio\Component\Database\Entity\LazyFetch;
 /**
  * @param string $query
  * @param array $params
+ * @param bool $forceMasterConnection
  *
  * @return LazyFetch
  */
-public function fetchLazy($query, array $params = []);
+public function fetchLazy($query, array $params = [], bool $forceMasterConnection = false);
 
 $lazyFetch = $db->fetchLazy("SELECT `id`,`name` FROM `table` WHERE `id` > ?", [1]);
 
