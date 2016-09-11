@@ -167,7 +167,7 @@ class DatabaseManager
         return $this->getWriteAdapter()->getLastInsertId($name);
     }
 
-    public function mysqlEscape(string $value) : string
+    public function escapeValue(string $value) : string
     {
         return $this->getWriteAdapter()->escapeValue($value);
     }

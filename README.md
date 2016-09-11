@@ -349,6 +349,29 @@ int(3)
 
 ```
 
+### `escapeValue`
+
+```php
+<?php
+
+/**
+ * @param string $value
+ *
+ * @return string
+ */
+public function escapeValue($value);
+
+$escapedValue = $db->escapeValue('Linio\'s Library');
+
+var_dump($escapedValue);
+
+/*
+string(17) "Linio\\'s Library"
+*/
+
+
+```
+
 ## Exceptions
 
 ### `Linio\Component\Database\Exception\DatabaseConnectionException`
