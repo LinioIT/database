@@ -19,4 +19,5 @@ interface AdapterInterface
     public function commit();
     public function rollBack();
     public function getLastInsertId(string $name = null);
+    public function escapeValue(string $value);
 }

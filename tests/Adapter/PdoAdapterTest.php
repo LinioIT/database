@@ -317,6 +317,15 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(10, $actual);
     }
 
+    public function testIsEscapingValue()
+    {
+        $value = "test'test\ntest";
+
+        $actual = $this->adapter->escapeValue($value);
+
+        $this->assertEquals('test\\\'test\\ntest', $actual);
+    }
+
     protected function createDatabase()
     {
         $this->pdo->exec(sprintf("CREATE DATABASE IF NOT EXISTS `%s`", $this->driverOptions['dbname']));

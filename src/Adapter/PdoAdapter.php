@@ -16,8 +16,14 @@ class PdoAdapter implements AdapterInterface
      */
     protected $pdo;
 
+    /**
+     * @var string
+     */
+    protected $driver;
+
     public function __construct(string $driver, array $options, string $role)
     {
+        $this->driver = $driver;
         $this->setPdo($driver, $options);
     }
 
@@ -170,6 +176,16 @@ class PdoAdapter implements AdapterInterface
     public function getLastInsertId(string $name = null)
     {
         return $this->pdo->lastInsertId($name);
+    }
+
+    public function escapeValue(string $value): string
+    {
+        switch ($this->driver) {
+            case DatabaseManager::DRIVER_MYSQL:
+                return str_replace(array('\\', "\0", "\n", "\r", "'", '"', "\x1a"), array('\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'), $value);
+            default:
+                throw new \RuntimeException('Method not yet implemented for this database');
+        }
     }
 
     /**
