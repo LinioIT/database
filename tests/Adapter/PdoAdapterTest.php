@@ -53,6 +53,24 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(PdoAdapter::class, $this->adapter);
     }
 
+    public function testIsSettingPdoDefaultErrorModeAttributeToException()
+    {
+        $testAdapter = new PdoAdapter(DatabaseManager::DRIVER_MYSQL, $this->driverOptions, DatabaseManager::ROLE_MASTER);
+
+        /* @var $adapterPdo \PDO */
+        $adapterPdo = PHPUnit_Framework_Assert::readAttribute($testAdapter, 'pdo');
+        $this->assertEquals(\PDO::ERRMODE_EXCEPTION, $adapterPdo->getAttribute(\PDO::ATTR_ERRMODE));
+    }
+
+    public function testIsSettingPdoDefaultErrorModeAttributeToExceptionWithoutUsernameAndPassword()
+    {
+        $testAdapter = new PdoAdapter(DatabaseManager::DRIVER_SQLITE, ['filepath' => '/tmp/test-db.sqlite'], DatabaseManager::ROLE_MASTER);
+
+        /* @var $adapterPdo \PDO */
+        $adapterPdo = PHPUnit_Framework_Assert::readAttribute($testAdapter, 'pdo');
+        $this->assertEquals(\PDO::ERRMODE_EXCEPTION, $adapterPdo->getAttribute(\PDO::ATTR_ERRMODE));
+    }
+
     public function testIsSettingPdoAttributes()
     {
         $testOptions = [
