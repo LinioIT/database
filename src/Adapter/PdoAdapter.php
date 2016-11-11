@@ -310,7 +310,7 @@ class PdoAdapter implements AdapterInterface
             if (isset($options['username']) && isset($options['password'])) {
                 $this->pdo = new \PDO($dsn, $options['username'], $options['password'], $driverOptions);
             } else {
-                $this->pdo = new \PDO($dsn);
+                $this->pdo = new \PDO($dsn, null, null, $driverOptions);
             }
         } catch (\PDOException $e) {
             throw new DatabaseConnectionException($e->getMessage(), $e->getCode(), $e);
