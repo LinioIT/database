@@ -172,6 +172,17 @@ class DatabaseManager
         return $this->getWriteAdapter()->escapeValue($value);
     }
 
+    public function escapeValues(array $values) : array
+    {
+        $escapedValues = [];
+
+        foreach ($values as $key => $value) {
+            $escapedValues[$key] = $this->escapeValue($value);
+        }
+
+        return $escapedValues;
+    }
+
     protected function setAdapterOptions()
     {
         $this->adapterOptions = [

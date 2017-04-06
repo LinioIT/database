@@ -93,7 +93,7 @@ To prevent replication lag issues, this library uses the safe mode by default. T
      *
      * @return bool
      */
-    public function addConnection($driver, array $options, $role = self::ROLE_MASTER, $weight = 1);
+    public function addConnection($driver, array $options, $role = self::ROLE_MASTER, $weight = 1) : bool;
 
 	$masterDbOptions = ['host' => '127.0.0.1', 'port' => 3306, 'dbname' => 'master_db', 'username' => 'root','password' => ''];
     $db->addConnection(DatabaseManager::DRIVER_MYSQL, $masterDbOptions, DatabaseManager::ROLE_MASTER);
@@ -117,7 +117,7 @@ use Linio\Component\Database\Entity\Connection;
 /**
  * @return Connection[]
  */
-public function getConnections();
+public function getConnections() : array;
 
 $connections = $db->getConnections();
 
@@ -151,7 +151,7 @@ array(2) {
  *
  * @return array
  */
-public function fetchAll($query, array $params = [], bool $forceMasterConnection = false);
+public function fetchAll($query, array $params = [], bool $forceMasterConnection = false) : array;
 
 $rows = $db->fetchAll("SELECT `id`,`name` FROM `table` WHERE `id` > ?", [1]);
 
@@ -190,7 +190,7 @@ array(2) {
  *
  * @return array
  */
-public function fetchOne($query, array $params = [], bool $forceMasterConnection = false);
+public function fetchOne($query, array $params = [], bool $forceMasterConnection = false) : array;
 
 $row = $db->fetchOne("SELECT `id`,`name` FROM `table` WHERE `id` = :id", ['id' => 1]);
 
@@ -220,7 +220,7 @@ array(2) {
  *
  * @return string
  */
-public function fetchValue($query, array $params = [], bool $forceMasterConnection = false);
+public function fetchValue($query, array $params = [], bool $forceMasterConnection = false) : string;
 
 $name = $db->fetchValue("SELECT `name` FROM `table` WHERE `id` = :id", ['id' => 1]);
 
@@ -244,7 +244,7 @@ string(6) "name 1"
  *
  * @return array
  */
-public function fetchKeyPairs($query, array $params = [], bool $forceMasterConnection = false);
+public function fetchKeyPairs($query, array $params = [], bool $forceMasterConnection = false) : array;
 
 $keyPairs = $db->fetchKeyPairs("SELECT `id`,`name` FROM `table` WHERE `id` > :id", ['id' => 1]);
 
@@ -274,7 +274,7 @@ array(2) {
  *
  * @return array
  */
-public function fetchColumn($query, array $params = [], $columnIndex = 0, bool $forceMasterConnection = false);
+public function fetchColumn($query, array $params = [], $columnIndex = 0, bool $forceMasterConnection = false) : array;
 
 $names = $db->fetchColumn("SELECT `id`,`name` FROM `table` WHERE `id` > :id", ['id' => 1], 1);
 
@@ -305,7 +305,7 @@ use Linio\Component\Database\Entity\LazyFetch;
  *
  * @return LazyFetch
  */
-public function fetchLazy($query, array $params = [], bool $forceMasterConnection = false);
+public function fetchLazy($query, array $params = [], bool $forceMasterConnection = false) : LazyFetch;
 
 $lazyFetch = $db->fetchLazy("SELECT `id`,`name` FROM `table` WHERE `id` > ?", [1]);
 
@@ -328,7 +328,7 @@ In this example, when this `while` loop reached the end of the result set, the `
  *
  * @return int
  */
-public function execute($query, array $params = []);
+public function execute($query, array $params = []) : int;
 
 $affectedRowsInsert = $db->execute("INSERT INTO `table` VALUES(:id, :name)", ['id' => 10, 'name' => 'test_name']);
 
@@ -359,7 +359,7 @@ int(3)
  *
  * @return string
  */
-public function escapeValue($value);
+public function escapeValue($value) : string;
 
 $escapedValue = $db->escapeValue('Linio\'s Library');
 
@@ -367,6 +367,35 @@ var_dump($escapedValue);
 
 /*
 string(17) "Linio\\'s Library"
+*/
+
+
+```
+
+### `escapeValues`
+
+```php
+<?php
+
+/**
+ * @param string[] $values
+ *
+ * @return string[]
+ */
+public function escapeValues(array $values) : array;
+
+$escapedValues = $db->escapeValues(['Linio\'s Library', 'Linio\'s Library']);
+
+var_dump($escapedValues);
+
+/*
+ * 
+array(2) {                    
+  [0]=>                       
+  string(17) "Linio\\'s Library"
+  [1]=>                       
+  string(17) "Linio\\'s Library"
+}                             
 */
 
 
