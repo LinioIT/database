@@ -8,10 +8,7 @@
         "php": ">=7.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~5.0"
-    },
-    "config": {
-        "bin-dir": "bin"
+        "phpunit/phpunit": "^5.0"
     },
     "autoload": {
         "psr-4": {
@@ -22,7 +19,5 @@
         "psr-4": {
             "Linio\\Component\\Database\\": "tests"
         }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }
