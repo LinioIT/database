@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Linio\Component\Database;
 
 /**
@@ -154,5 +156,4 @@ class DatabaseManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($db->beginTransaction());
         $this->assertTrue($db->commit());
     }
-
 }

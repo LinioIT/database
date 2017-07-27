@@ -6,15 +6,10 @@ abstract database access by wrapping PDO and providing helper methods to speed u
 
 ## Install
 
-
 The recommended way to install Linio Database is [through composer](http://getcomposer.org).
 
-```JSON
-{
-    "require": {
-        "linio/database": "dev-master"
-    }
-}
+```bash
+$ composer require linio/database
 ```
 
 ## Tests
@@ -23,7 +18,7 @@ To run the test suite, you need install the dependencies via composer, then
 run PHPUnit.
 
     $ composer install
-    $ phpunit
+    $ vendor/bin/phpunit
 
 ## Usage
 

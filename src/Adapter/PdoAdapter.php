@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Linio\Component\Database\Adapter;
@@ -182,7 +183,7 @@ class PdoAdapter implements AdapterInterface
     {
         switch ($this->driver) {
             case DatabaseManager::DRIVER_MYSQL:
-                return str_replace(array('\\', "\0", "\n", "\r", "'", '"', "\x1a"), array('\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'), $value);
+                return str_replace(['\\', "\0", "\n", "\r", "'", '"', "\x1a"], ['\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'], $value);
             default:
                 throw new \RuntimeException('Method not yet implemented for this database');
         }

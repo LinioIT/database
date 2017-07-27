@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Linio\Component\Database\Adapter;
 
 use Linio\Component\Database\DatabaseManager;
@@ -29,7 +31,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
      */
     protected $driverOptions;
 
-    function __construct()
+    public function __construct()
     {
         $this->driverOptions = [
             'host' => TEST_DATABASE_HOST,
@@ -57,7 +59,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
     {
         $testAdapter = new PdoAdapter(DatabaseManager::DRIVER_MYSQL, $this->driverOptions, DatabaseManager::ROLE_MASTER);
 
-        /* @var $adapterPdo \PDO */
+        // @var $adapterPdo \PDO
         $adapterPdo = PHPUnit_Framework_Assert::readAttribute($testAdapter, 'pdo');
         $this->assertEquals(\PDO::ERRMODE_EXCEPTION, $adapterPdo->getAttribute(\PDO::ATTR_ERRMODE));
     }
@@ -66,7 +68,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
     {
         $testAdapter = new PdoAdapter(DatabaseManager::DRIVER_SQLITE, ['filepath' => '/tmp/test-db.sqlite'], DatabaseManager::ROLE_MASTER);
 
-        /* @var $adapterPdo \PDO */
+        // @var $adapterPdo \PDO
         $adapterPdo = PHPUnit_Framework_Assert::readAttribute($testAdapter, 'pdo');
         $this->assertEquals(\PDO::ERRMODE_EXCEPTION, $adapterPdo->getAttribute(\PDO::ATTR_ERRMODE));
     }
@@ -77,14 +79,14 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
             'pdo_attributes' => [
                 \PDO::ATTR_PERSISTENT => true,
                 \PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING,
-            ]
+            ],
         ];
 
         $driverOptions = $this->driverOptions + $testOptions;
 
         $testAdapter = new PdoAdapter(DatabaseManager::DRIVER_MYSQL, $driverOptions, DatabaseManager::ROLE_MASTER);
 
-        /* @var $adapterPdo \PDO */
+        // @var $adapterPdo \PDO
         $adapterPdo = PHPUnit_Framework_Assert::readAttribute($testAdapter, 'pdo');
         $this->assertTrue($adapterPdo->getAttribute(\PDO::ATTR_PERSISTENT));
         $this->assertEquals(\PDO::ERRMODE_WARNING, $adapterPdo->getAttribute(\PDO::ATTR_ERRMODE));
@@ -92,7 +94,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testIsFetchingAllWithoutParams()
     {
-        $actual = $this->adapter->fetchAll("SELECT * FROM `departments` ORDER BY `dept_no`");
+        $actual = $this->adapter->fetchAll('SELECT * FROM `departments` ORDER BY `dept_no`');
 
         $this->assertInternalType('array', $actual);
         $firstRow = reset($actual);
@@ -106,7 +108,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testIsFetchingAllWithNamelessParam()
     {
-        $actual = $this->adapter->fetchAll("SELECT * FROM `departments` WHERE `dept_no` = ?", ['d001']);
+        $actual = $this->adapter->fetchAll('SELECT * FROM `departments` WHERE `dept_no` = ?', ['d001']);
 
         $this->assertInternalType('array', $actual);
         $firstRow = reset($actual);
@@ -120,7 +122,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testIsFetchingAllWithNamedParam()
     {
-        $actual = $this->adapter->fetchAll("SELECT * FROM `departments` WHERE `dept_no` = :dept_no", ['dept_no' => 'd001']);
+        $actual = $this->adapter->fetchAll('SELECT * FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd001']);
 
         $this->assertInternalType('array', $actual);
         $firstRow = reset($actual);
@@ -134,7 +136,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testIsFetchingAllWithEmptyResult()
     {
-        $actual = $this->adapter->fetchAll("SELECT * FROM `departments` WHERE `dept_no` = :dept_no", ['dept_no' => 'd099']);
+        $actual = $this->adapter->fetchAll('SELECT * FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd099']);
 
         $this->assertInternalType('array', $actual);
         $this->assertEmpty($actual);
@@ -142,7 +144,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testIsFetchingOneWithNamedParam()
     {
-        $actual = $this->adapter->fetchOne("SELECT * FROM `departments` WHERE `dept_no` = :dept_no", ['dept_no' => 'd001']);
+        $actual = $this->adapter->fetchOne('SELECT * FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd001']);
 
         $this->assertInternalType('array', $actual);
         $this->assertArrayHasKey('dept_id', $actual);
@@ -154,7 +156,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testIsFetchingOneWithEmptyResult()
     {
-        $actual = $this->adapter->fetchOne("SELECT * FROM `departments` WHERE `dept_no` = :dept_no", ['dept_no' => 'd099']);
+        $actual = $this->adapter->fetchOne('SELECT * FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd099']);
 
         $this->assertInternalType('array', $actual);
         $this->assertEmpty($actual);
@@ -162,21 +164,21 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testIsFetchingValueWithNamedParam()
     {
-        $actual = $this->adapter->fetchValue("SELECT `dept_name` FROM `departments` WHERE `dept_no` = :dept_no", ['dept_no' => 'd001']);
+        $actual = $this->adapter->fetchValue('SELECT `dept_name` FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd001']);
 
         $this->assertEquals('Marketing', $actual);
     }
 
     public function testIsFetchingValueWithEmptyResult()
     {
-        $actual = $this->adapter->fetchValue("SELECT `dept_name` FROM `departments` WHERE `dept_no` = :dept_no", ['dept_no' => 'd099']);
+        $actual = $this->adapter->fetchValue('SELECT `dept_name` FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd099']);
 
         $this->assertNull($actual);
     }
 
     public function testIsFetchingKeyPairWithNamedParam()
     {
-        $actual = $this->adapter->fetchKeyPairs("SELECT `dept_no`,`dept_name` FROM `departments` WHERE `dept_no` = :dept_no", ['dept_no' => 'd001']);
+        $actual = $this->adapter->fetchKeyPairs('SELECT `dept_no`,`dept_name` FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd001']);
 
         $this->assertInternalType('array', $actual);
         $this->assertArrayHasKey('d001', $actual);
@@ -185,7 +187,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testIsFetchingKeyPairWithEmptyResult()
     {
-        $actual = $this->adapter->fetchKeyPairs("SELECT `dept_no`,`dept_name` FROM `departments` WHERE `dept_no` = :dept_no", ['dept_no' => 'd099']);
+        $actual = $this->adapter->fetchKeyPairs('SELECT `dept_no`,`dept_name` FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd099']);
 
         $this->assertInternalType('array', $actual);
         $this->assertEmpty($actual);
@@ -193,7 +195,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testIsFetchingColumnWithIndexZero()
     {
-        $actual = $this->adapter->fetchColumn("SELECT `dept_no`,`dept_name` FROM `departments` ORDER BY `dept_no`", [], 0);
+        $actual = $this->adapter->fetchColumn('SELECT `dept_no`,`dept_name` FROM `departments` ORDER BY `dept_no`', [], 0);
 
         $this->assertInternalType('array', $actual);
         $this->assertCount(9, $actual);
@@ -203,7 +205,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testIsFetchingColumnWithIndexOne()
     {
-        $actual = $this->adapter->fetchColumn("SELECT `dept_no`,`dept_name` FROM `departments` ORDER BY `dept_no`", [], 1);
+        $actual = $this->adapter->fetchColumn('SELECT `dept_no`,`dept_name` FROM `departments` ORDER BY `dept_no`', [], 1);
 
         $this->assertInternalType('array', $actual);
         $this->assertCount(9, $actual);
@@ -213,7 +215,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testIsFetchingLazy()
     {
-        $lazyFetch = $this->adapter->fetchLazy("SELECT * FROM `departments` ORDER BY `dept_no`");
+        $lazyFetch = $this->adapter->fetchLazy('SELECT * FROM `departments` ORDER BY `dept_no`');
 
         $this->assertInstanceOf('\Linio\Component\Database\Entity\LazyFetch', $lazyFetch);
 
@@ -245,29 +247,29 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
     public function testIsExecutingInserts()
     {
         $actual = $this->adapter->execute(
-            "INSERT INTO `departments` (`dept_no`, `dept_name`) VALUES (?, ?), (?, ?)",
+            'INSERT INTO `departments` (`dept_no`, `dept_name`) VALUES (?, ?), (?, ?)',
             ['d010', 'Test Dept 1', 'd011', 'Test Dept 2']
         );
 
         $this->assertEquals(2, $actual);
 
-        $count = $this->adapter->fetchValue("SELECT COUNT(*) FROM `departments` WHERE `dept_no` IN (?, ?)", ['d010', 'd011']);
+        $count = $this->adapter->fetchValue('SELECT COUNT(*) FROM `departments` WHERE `dept_no` IN (?, ?)', ['d010', 'd011']);
         $this->assertEquals(2, $count);
     }
 
     public function testIsExecutingUpdates()
     {
-        $actual = $this->adapter->execute("UPDATE `departments` SET `dept_name` = ?", ['Test Dept']);
+        $actual = $this->adapter->execute('UPDATE `departments` SET `dept_name` = ?', ['Test Dept']);
 
         $this->assertEquals(9, $actual);
 
-        $count = $this->adapter->fetchValue("SELECT COUNT(*) FROM `departments` WHERE `dept_name` = ?", ['Test Dept']);
+        $count = $this->adapter->fetchValue('SELECT COUNT(*) FROM `departments` WHERE `dept_name` = ?', ['Test Dept']);
         $this->assertEquals(9, $count);
     }
 
     public function testIsExecutingUpdatesWithNoMatched()
     {
-        $actual = $this->adapter->execute("UPDATE `departments` SET `dept_name` = ? WHERE `dept_no` = ?", ['Test Dept', 'd010']);
+        $actual = $this->adapter->execute('UPDATE `departments` SET `dept_name` = ? WHERE `dept_no` = ?', ['Test Dept', 'd010']);
 
         $this->assertEquals(0, $actual);
     }
@@ -295,7 +297,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsThrowingExceptionWithInvalidQuery()
     {
-        $this->adapter->execute("UPDATE `nop` SET `dept_name` = ? WHERE `dept_no` = ?", ['Test Dept', 'd010']);
+        $this->adapter->execute('UPDATE `nop` SET `dept_name` = ? WHERE `dept_no` = ?', ['Test Dept', 'd010']);
     }
 
     public function testIsCreatingAndCommitingTransaction()
@@ -328,7 +330,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testIsGettingLastInsertId()
     {
-        $this->adapter->execute("INSERT INTO `departments` (`dept_no`, `dept_name`) VALUES (?, ?)", ['d010', 'Test Dept 110']);
+        $this->adapter->execute('INSERT INTO `departments` (`dept_no`, `dept_name`) VALUES (?, ?)', ['d010', 'Test Dept 110']);
 
         $actual = $this->adapter->getLastInsertId();
 
@@ -346,15 +348,15 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
 
     protected function createDatabase()
     {
-        $this->pdo->exec(sprintf("CREATE DATABASE IF NOT EXISTS `%s`", $this->driverOptions['dbname']));
-        $this->pdo->exec(sprintf("DROP TABLE IF EXISTS `%s`.`departments`", $this->driverOptions['dbname']));
+        $this->pdo->exec(sprintf('CREATE DATABASE IF NOT EXISTS `%s`', $this->driverOptions['dbname']));
+        $this->pdo->exec(sprintf('DROP TABLE IF EXISTS `%s`.`departments`', $this->driverOptions['dbname']));
         $this->pdo->exec(
             sprintf(
-                "CREATE TABLE IF NOT EXISTS `%s`.`departments` (
+                'CREATE TABLE IF NOT EXISTS `%s`.`departments` (
           `dept_id` int(10) NOT NULL AUTO_INCREMENT,
           `dept_no` char(4) NOT NULL,
           `dept_name` varchar(40) NOT NULL,
-          PRIMARY KEY (`dept_id`))",
+          PRIMARY KEY (`dept_id`))',
                 $this->driverOptions['dbname']
             )
         );
@@ -362,7 +364,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
 
     protected function createDatabaseFixture()
     {
-        $this->pdo->exec(sprintf("TRUNCATE TABLE `%s`.`departments`", $this->driverOptions['dbname']));
+        $this->pdo->exec(sprintf('TRUNCATE TABLE `%s`.`departments`', $this->driverOptions['dbname']));
         $this->pdo->exec(
             sprintf(
                 "INSERT INTO `%s`.`departments` (`dept_no`, `dept_name`) VALUES ('d009','Customer Service'),('d005','Development'),('d002','Finance'),
@@ -382,7 +384,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
             $this->driverOptions['username'],
             $this->driverOptions['password'],
             [
-                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
             ]
         );
 

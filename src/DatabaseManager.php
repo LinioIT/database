@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Linio\Component\Database;
@@ -167,12 +168,12 @@ class DatabaseManager
         return $this->getWriteAdapter()->getLastInsertId($name);
     }
 
-    public function escapeValue(string $value) : string
+    public function escapeValue(string $value): string
     {
         return $this->getWriteAdapter()->escapeValue($value);
     }
 
-    public function escapeValues(array $values) : array
+    public function escapeValues(array $values): array
     {
         $escapedValues = [];
 
