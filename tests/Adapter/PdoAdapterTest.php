@@ -8,7 +8,6 @@ use Linio\Component\Database\DatabaseManager;
 use Linio\Component\Database\Entity\LazyFetch;
 use Linio\Component\Database\Exception\InvalidQueryException;
 use PDO;
-use PDOException;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 
@@ -295,30 +294,6 @@ class PdoAdapterTest extends TestCase
     {
         $this->expectException(InvalidQueryException::class);
         $this->adapter->execute('UPDATE `nop` SET `dept_name` = ? WHERE `dept_no` = ?', ['Test Dept', 'd010']);
-    }
-
-    public function testIsCreatingAndCommittingTransaction()
-    {
-        $this->assertTrue($this->pdo->beginTransaction());
-        $this->assertTrue($this->pdo->commit());
-    }
-
-    public function testIsCreatingAndRollingBackTransaction()
-    {
-        $this->assertTrue($this->pdo->beginTransaction());
-        $this->assertTrue($this->pdo->rollBack());
-    }
-
-    public function testIsNotCommittingTransactionWithoutCreating()
-    {
-        $this->expectException(PDOException::class);
-        $this->pdo->commit();
-    }
-
-    public function testIsNotRollingBackTransactionWithoutCreating()
-    {
-        $this->expectException(PDOException::class);
-        $this->pdo->rollBack();
     }
 
     public function testIsGettingLastInsertId()
