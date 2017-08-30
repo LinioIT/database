@@ -76,10 +76,10 @@ interface AdapterInterface
     /**
      * @throws DatabaseException
      */
-    public function getLastInsertId(string $name = null);
+    public function getLastInsertId(string $name = null): string;
 
     /**
      * @throws DatabaseException Support for the database has not been implemented yet
      */
-    public function escapeValue(string $value);
+    public function escapeValue(string $value): string;
 }

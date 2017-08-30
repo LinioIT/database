@@ -211,7 +211,7 @@ class PdoAdapter implements AdapterInterface
     /**
      * @throws DatabaseException
      */
-    public function getLastInsertId(string $name = null)
+    public function getLastInsertId(string $name = null): string
     {
         try {
             return $this->pdo->lastInsertId($name);

@@ -267,7 +267,7 @@ class DatabaseManager
     /**
      * @throws DatabaseException
      */
-    public function getLastInsertId(string $name = null)
+    public function getLastInsertId(string $name = null): string
     {
         try {
             return $this->getWriteAdapter()->getLastInsertId($name);
