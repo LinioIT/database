@@ -32,7 +32,7 @@ class PdoAdapterTest extends TestCase
      */
     protected $driverOptions;
 
-    public function __construct()
+    protected function setUp()
     {
         $this->driverOptions = [
             'host' => TEST_DATABASE_HOST,
@@ -43,10 +43,6 @@ class PdoAdapterTest extends TestCase
         ];
         $this->pdo = $this->getPdo();
         $this->createDatabase();
-    }
-
-    protected function setUp()
-    {
         $this->createDatabaseFixture();
         $this->adapter = new PdoAdapter(DatabaseManager::DRIVER_MYSQL, $this->driverOptions, DatabaseManager::ROLE_MASTER);
     }
@@ -301,7 +297,7 @@ class PdoAdapterTest extends TestCase
         $this->adapter->execute('UPDATE `nop` SET `dept_name` = ? WHERE `dept_no` = ?', ['Test Dept', 'd010']);
     }
 
-    public function testIsCreatingAndCommitingTransaction()
+    public function testIsCreatingAndCommittingTransaction()
     {
         $this->assertTrue($this->pdo->beginTransaction());
         $this->assertTrue($this->pdo->commit());
