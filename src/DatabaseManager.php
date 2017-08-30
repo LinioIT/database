@@ -13,6 +13,8 @@ use Linio\Component\Database\Exception\DatabaseException;
 use Linio\Component\Database\Exception\FetchException;
 use Linio\Component\Database\Exception\InvalidQueryException;
 use Linio\Component\Database\Exception\TransactionException;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class DatabaseManager
 {
@@ -56,11 +58,17 @@ class DatabaseManager
      */
     protected $hasUsedWriteAdapter = false;
 
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
     public function __construct($safeMode = true)
     {
         $this->setAdapterOptions();
         $this->slaveConnections = new SlaveConnectionCollection();
         $this->safeMode = $safeMode;
+        $this->logger = new NullLogger();
     }
 
     public function addConnection(string $driver, array $options, string $role = self::ROLE_MASTER, int $weight = 1): bool
@@ -76,6 +84,11 @@ class DatabaseManager
         }
 
         return true;
+    }
+
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -95,8 +108,13 @@ class DatabaseManager
      */
     public function fetchAll(string $query, array $params = [], bool $forceMasterConnection = false): array
     {
-        return $this->getReadAdapter($forceMasterConnection)
-            ->fetchAll($query, $params);
+        try {
+            return $this->getReadAdapter($forceMasterConnection)->fetchAll($query, $params);
+        } catch (DatabaseException $exception) {
+            $this->logQueryException($exception, $query, $params);
+
+            throw $exception;
+        }
     }
 
     /**
@@ -105,8 +123,13 @@ class DatabaseManager
      */
     public function fetchOne(string $query, array $params = [], bool $forceMasterConnection = false): array
     {
-        return $this->getReadAdapter($forceMasterConnection)
-            ->fetchOne($query, $params);
+        try {
+            return $this->getReadAdapter($forceMasterConnection)->fetchOne($query, $params);
+        } catch (DatabaseException $exception) {
+            $this->logQueryException($exception, $query, $params);
+
+            throw $exception;
+        }
     }
 
     /**
@@ -115,8 +138,13 @@ class DatabaseManager
      */
     public function fetchValue(string $query, array $params = [], bool $forceMasterConnection = false)
     {
-        return $this->getReadAdapter($forceMasterConnection)
-            ->fetchValue($query, $params);
+        try {
+            return $this->getReadAdapter($forceMasterConnection)->fetchValue($query, $params);
+        } catch (DatabaseException $exception) {
+            $this->logQueryException($exception, $query, $params);
+
+            throw $exception;
+        }
     }
 
     /**
@@ -125,8 +153,13 @@ class DatabaseManager
      */
     public function fetchKeyPairs(string $query, array $params = [], bool $forceMasterConnection = false): array
     {
-        return $this->getReadAdapter($forceMasterConnection)
-            ->fetchKeyPairs($query, $params);
+        try {
+            return $this->getReadAdapter($forceMasterConnection)->fetchKeyPairs($query, $params);
+        } catch (DatabaseException $exception) {
+            $this->logQueryException($exception, $query, $params);
+
+            throw $exception;
+        }
     }
 
     /**
@@ -135,8 +168,13 @@ class DatabaseManager
      */
     public function fetchColumn(string $query, array $params = [], int $columnIndex = 0, bool $forceMasterConnection = false): array
     {
-        return $this->getReadAdapter($forceMasterConnection)
-            ->fetchColumn($query, $params, $columnIndex);
+        try {
+            return $this->getReadAdapter($forceMasterConnection)->fetchColumn($query, $params, $columnIndex);
+        } catch (DatabaseException $exception) {
+            $this->logQueryException($exception, $query, $params);
+
+            throw $exception;
+        }
     }
 
     /**
@@ -144,8 +182,13 @@ class DatabaseManager
      */
     public function fetchLazy(string $query, array $params = [], bool $forceMasterConnection = false): LazyFetch
     {
-        return $this->getReadAdapter($forceMasterConnection)
-            ->fetchLazy($query, $params);
+        try {
+            return $this->getReadAdapter($forceMasterConnection)->fetchLazy($query, $params);
+        } catch (DatabaseException $exception) {
+            $this->logQueryException($exception, $query, $params);
+
+            throw $exception;
+        }
     }
 
     /**
@@ -153,8 +196,13 @@ class DatabaseManager
      */
     public function execute(string $query, array $params = []): int
     {
-        return $this->getWriteAdapter()
-            ->execute($query, $params);
+        try {
+            return $this->getWriteAdapter()->execute($query, $params);
+        } catch (DatabaseException $exception) {
+            $this->logQueryException($exception, $query, $params);
+
+            throw $exception;
+        }
     }
 
     /**
@@ -167,7 +215,11 @@ class DatabaseManager
         }
 
         $this->hasActiveTransaction = true;
-        $this->getWriteAdapter()->beginTransaction();
+        try {
+            $this->getWriteAdapter()->beginTransaction();
+        } catch (DatabaseException $exception) {
+            $this->logException($exception);
+        }
 
         return true;
     }
@@ -181,7 +233,12 @@ class DatabaseManager
             return false;
         }
 
-        $this->getWriteAdapter()->commit();
+        try {
+            $this->getWriteAdapter()->commit();
+        } catch (DatabaseException $exception) {
+            $this->logException($exception);
+        }
+
         $this->hasActiveTransaction = false;
 
         return true;
@@ -196,7 +253,12 @@ class DatabaseManager
             return false;
         }
 
-        $this->getWriteAdapter()->rollBack();
+        try {
+            $this->getWriteAdapter()->rollBack();
+        } catch (DatabaseException $exception) {
+            $this->logException($exception);
+        }
+
         $this->hasActiveTransaction = false;
 
         return true;
@@ -207,7 +269,11 @@ class DatabaseManager
      */
     public function getLastInsertId(string $name = null)
     {
-        return $this->getWriteAdapter()->getLastInsertId($name);
+        try {
+            return $this->getWriteAdapter()->getLastInsertId($name);
+        } catch (DatabaseException $exception) {
+            $this->logException($exception);
+        }
     }
 
     /**
@@ -215,7 +281,11 @@ class DatabaseManager
      */
     public function escapeValue(string $value): string
     {
-        return $this->getWriteAdapter()->escapeValue($value);
+        try {
+            return $this->getWriteAdapter()->escapeValue($value);
+        } catch (DatabaseException $exception) {
+            $this->logException($exception);
+        }
     }
 
     /**
@@ -311,5 +381,25 @@ class DatabaseManager
         $this->hasUsedWriteAdapter = true;
 
         return $this->masterConnection->getAdapter();
+    }
+
+    protected function logQueryException(DatabaseException $exception, string $query, array $params)
+    {
+        $message = sprintf('A database exception occurred [%s]', $exception->getMessage());
+
+        $this->logger->critical($message, [
+            'exception' => $exception,
+            'query' => $query,
+            'parameters' => $params,
+        ]);
+    }
+
+    protected function logException(DatabaseException $exception)
+    {
+        $message = sprintf('A database exception occurred [%s]', $exception->getMessage());
+
+        $this->logger->critical($message, [
+            'exception' => $exception,
+        ]);
     }
 }
