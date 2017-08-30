@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Linio\Component\Database\Adapter;
 
 use Linio\Component\Database\DatabaseManager;
+use Linio\Component\Database\Entity\LazyFetch;
+use Linio\Component\Database\Exception\InvalidQueryException;
+use PDO;
+use PDOException;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 
@@ -23,7 +27,7 @@ class PdoAdapterTest extends TestCase
     protected $adapter;
 
     /**
-     * @var \PDO
+     * @var PDO
      */
     protected $pdo;
 
@@ -56,26 +60,26 @@ class PdoAdapterTest extends TestCase
     {
         $testAdapter = new PdoAdapter(DatabaseManager::DRIVER_MYSQL, $this->driverOptions, DatabaseManager::ROLE_MASTER);
 
-        // @var $adapterPdo \PDO
+        /** @var PDO $adapterPdo */
         $adapterPdo = Assert::readAttribute($testAdapter, 'pdo');
-        $this->assertEquals(\PDO::ERRMODE_EXCEPTION, $adapterPdo->getAttribute(\PDO::ATTR_ERRMODE));
+        $this->assertEquals(PDO::ERRMODE_EXCEPTION, $adapterPdo->getAttribute(PDO::ATTR_ERRMODE));
     }
 
     public function testIsSettingPdoDefaultErrorModeAttributeToExceptionWithoutUsernameAndPassword()
     {
         $testAdapter = new PdoAdapter(DatabaseManager::DRIVER_SQLITE, ['filepath' => '/tmp/test-db.sqlite'], DatabaseManager::ROLE_MASTER);
 
-        // @var $adapterPdo \PDO
+        /** @var PDO $adapterPdo */
         $adapterPdo = Assert::readAttribute($testAdapter, 'pdo');
-        $this->assertEquals(\PDO::ERRMODE_EXCEPTION, $adapterPdo->getAttribute(\PDO::ATTR_ERRMODE));
+        $this->assertEquals(PDO::ERRMODE_EXCEPTION, $adapterPdo->getAttribute(PDO::ATTR_ERRMODE));
     }
 
     public function testIsSettingPdoAttributes()
     {
         $testOptions = [
             'pdo_attributes' => [
-                \PDO::ATTR_PERSISTENT => true,
-                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING,
+                PDO::ATTR_PERSISTENT => true,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING,
             ],
         ];
 
@@ -83,10 +87,10 @@ class PdoAdapterTest extends TestCase
 
         $testAdapter = new PdoAdapter(DatabaseManager::DRIVER_MYSQL, $driverOptions, DatabaseManager::ROLE_MASTER);
 
-        // @var $adapterPdo \PDO
+        /** @var PDO $adapterPdo */
         $adapterPdo = Assert::readAttribute($testAdapter, 'pdo');
-        $this->assertTrue($adapterPdo->getAttribute(\PDO::ATTR_PERSISTENT));
-        $this->assertEquals(\PDO::ERRMODE_WARNING, $adapterPdo->getAttribute(\PDO::ATTR_ERRMODE));
+        $this->assertTrue($adapterPdo->getAttribute(PDO::ATTR_PERSISTENT));
+        $this->assertEquals(PDO::ERRMODE_WARNING, $adapterPdo->getAttribute(PDO::ATTR_ERRMODE));
     }
 
     public function testIsFetchingAllWithoutParams()
@@ -214,7 +218,7 @@ class PdoAdapterTest extends TestCase
     {
         $lazyFetch = $this->adapter->fetchLazy('SELECT * FROM `departments` ORDER BY `dept_no`');
 
-        $this->assertInstanceOf('\Linio\Component\Database\Entity\LazyFetch', $lazyFetch);
+        $this->assertInstanceOf(LazyFetch::class, $lazyFetch);
 
         $firstRow = $lazyFetch->fetch();
         $this->assertInternalType('array', $firstRow);
@@ -275,7 +279,7 @@ class PdoAdapterTest extends TestCase
     {
         $driverOptions = $this->driverOptions;
         $driverOptions['pdo_attributes'] = [
-            \PDO::ATTR_EMULATE_PREPARES => false,
+            PDO::ATTR_EMULATE_PREPARES => false,
         ];
 
         $this->createDatabaseFixture();
@@ -289,11 +293,9 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals(9, $actual);
     }
 
-    /**
-     * @expectedException \Linio\Component\Database\Exception\InvalidQueryException
-     */
     public function testIsThrowingExceptionWithInvalidQuery()
     {
+        $this->expectException(InvalidQueryException::class);
         $this->adapter->execute('UPDATE `nop` SET `dept_name` = ? WHERE `dept_no` = ?', ['Test Dept', 'd010']);
     }
 
@@ -309,19 +311,15 @@ class PdoAdapterTest extends TestCase
         $this->assertTrue($this->pdo->rollBack());
     }
 
-    /**
-     * @expectedException \PDOException
-     */
     public function testIsNotCommittingTransactionWithoutCreating()
     {
+        $this->expectException(PDOException::class);
         $this->pdo->commit();
     }
 
-    /**
-     * @expectedException \PDOException
-     */
     public function testIsNotRollingBackTransactionWithoutCreating()
     {
+        $this->expectException(PDOException::class);
         $this->pdo->rollBack();
     }
 
@@ -371,20 +369,15 @@ class PdoAdapterTest extends TestCase
         );
     }
 
-    /**
-     * @return \PDO
-     */
-    protected function getPdo()
+    protected function getPdo(): PDO
     {
-        $pdo = new \PDO(
+        return new PDO(
             sprintf('mysql:host=%s;port=%s', $this->driverOptions['host'], $this->driverOptions['port']),
             $this->driverOptions['username'],
             $this->driverOptions['password'],
             [
-                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ]
         );
-
-        return $pdo;
     }
 }
