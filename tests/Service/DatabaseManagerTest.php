@@ -106,7 +106,7 @@ class DatabaseManagerTest extends TestCase
         $this->assertInstanceOf(Connection::class, $actual[DatabaseManager::ROLE_MASTER]);
     }
 
-    public function testIsCreatingandCommitingTransaction()
+    public function testIsCreatingAndCommitingTransaction()
     {
         $db = new DatabaseManager();
         $connectionOptions = [
