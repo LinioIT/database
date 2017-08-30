@@ -25,6 +25,9 @@ class PdoAdapter implements AdapterInterface
      */
     protected $driver;
 
+    /**
+     * @throws DatabaseConnectionException
+     */
     public function __construct(string $driver, array $options, string $role)
     {
         $this->driver = $driver;
@@ -32,6 +35,7 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
+     * @throws InvalidQueryException
      * @throws DatabaseException
      */
     public function fetchAll(string $query, array $params = []): array
@@ -47,6 +51,7 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
+     * @throws InvalidQueryException
      * @throws DatabaseException
      */
     public function fetchOne(string $query, array $params = []): array
@@ -66,6 +71,7 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
+     * @throws InvalidQueryException
      * @throws DatabaseException
      */
     public function fetchValue(string $query, array $params = [])
@@ -90,6 +96,7 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
+     * @throws InvalidQueryException
      * @throws DatabaseException
      */
     public function fetchKeyPairs(string $query, array $params = []): array
@@ -105,6 +112,7 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
+     * @throws InvalidQueryException
      * @throws DatabaseException
      */
     public function fetchColumn(string $query, array $params = [], int $columnIndex = 0): array
@@ -130,6 +138,7 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
+     * @throws InvalidQueryException
      * @throws DatabaseException
      */
     public function execute(string $query, array $params = []): int
