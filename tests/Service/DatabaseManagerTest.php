@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Linio\Component\Database;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @constant TEST_DATABASE_HOST
  * @constant TEST_DATABASE_PORT
@@ -11,7 +13,7 @@ namespace Linio\Component\Database;
  * @constant TEST_DATABASE_USERNAME
  * @constant TEST_DATABASE_PASSWORD
  */
-class DatabaseManagerTest extends \PHPUnit_Framework_TestCase
+class DatabaseManagerTest extends TestCase
 {
     public function testIsConstructingService()
     {

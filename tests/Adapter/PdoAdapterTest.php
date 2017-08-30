@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Linio\Component\Database\Adapter;
 
 use Linio\Component\Database\DatabaseManager;
-use PHPUnit_Framework_Assert;
+use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @constant TEST_DATABASE_HOST
@@ -14,7 +15,7 @@ use PHPUnit_Framework_Assert;
  * @constant TEST_DATABASE_USERNAME
  * @constant TEST_DATABASE_PASSWORD
  */
-class PdoAdapterTest extends \PHPUnit_Framework_TestCase
+class PdoAdapterTest extends TestCase
 {
     /**
      * @var PdoAdapter
@@ -60,7 +61,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
         $testAdapter = new PdoAdapter(DatabaseManager::DRIVER_MYSQL, $this->driverOptions, DatabaseManager::ROLE_MASTER);
 
         // @var $adapterPdo \PDO
-        $adapterPdo = PHPUnit_Framework_Assert::readAttribute($testAdapter, 'pdo');
+        $adapterPdo = Assert::readAttribute($testAdapter, 'pdo');
         $this->assertEquals(\PDO::ERRMODE_EXCEPTION, $adapterPdo->getAttribute(\PDO::ATTR_ERRMODE));
     }
 
@@ -69,7 +70,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
         $testAdapter = new PdoAdapter(DatabaseManager::DRIVER_SQLITE, ['filepath' => '/tmp/test-db.sqlite'], DatabaseManager::ROLE_MASTER);
 
         // @var $adapterPdo \PDO
-        $adapterPdo = PHPUnit_Framework_Assert::readAttribute($testAdapter, 'pdo');
+        $adapterPdo = Assert::readAttribute($testAdapter, 'pdo');
         $this->assertEquals(\PDO::ERRMODE_EXCEPTION, $adapterPdo->getAttribute(\PDO::ATTR_ERRMODE));
     }
 
@@ -87,7 +88,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
         $testAdapter = new PdoAdapter(DatabaseManager::DRIVER_MYSQL, $driverOptions, DatabaseManager::ROLE_MASTER);
 
         // @var $adapterPdo \PDO
-        $adapterPdo = PHPUnit_Framework_Assert::readAttribute($testAdapter, 'pdo');
+        $adapterPdo = Assert::readAttribute($testAdapter, 'pdo');
         $this->assertTrue($adapterPdo->getAttribute(\PDO::ATTR_PERSISTENT));
         $this->assertEquals(\PDO::ERRMODE_WARNING, $adapterPdo->getAttribute(\PDO::ATTR_ERRMODE));
     }
