@@ -12,6 +12,7 @@ use Linio\Component\Database\Exception\InvalidQueryException;
 use PDO;
 use PDOException;
 use PDOStatement;
+use RuntimeException;
 
 class PdoAdapter implements AdapterInterface
 {
@@ -171,33 +172,64 @@ class PdoAdapter implements AdapterInterface
         return $stmt;
     }
 
+    /**
+     * @throws DatabaseException
+     */
     public function beginTransaction()
     {
-        $this->pdo->beginTransaction();
+        try {
+            $this->pdo->beginTransaction();
+        } catch (PDOException $exception) {
+            throw new DatabaseException($exception->getMessage(), $exception->getCode(), $exception);
+        }
     }
 
+    /**
+     * @throws DatabaseException
+     */
     public function commit()
     {
-        $this->pdo->commit();
+        try {
+            $this->pdo->commit();
+        } catch (PDOException $exception) {
+            throw new DatabaseException($exception->getMessage(), $exception->getCode(), $exception);
+        }
     }
 
+    /**
+     * @throws DatabaseException
+     */
     public function rollBack()
     {
-        $this->pdo->rollBack();
+        try {
+            $this->pdo->rollBack();
+        } catch (PDOException $exception) {
+            throw new DatabaseException($exception->getMessage(), $exception->getCode(), $exception);
+        }
     }
 
+    /**
+     * @throws DatabaseException
+     */
     public function getLastInsertId(string $name = null)
     {
-        return $this->pdo->lastInsertId($name);
+        try {
+            return $this->pdo->lastInsertId($name);
+        } catch (PDOException $exception) {
+            throw new DatabaseException($exception->getMessage(), $exception->getCode(), $exception);
+        }
     }
 
+    /**
+     * @throws RuntimeException
+     */
     public function escapeValue(string $value): string
     {
         switch ($this->driver) {
             case DatabaseManager::DRIVER_MYSQL:
                 return str_replace(['\\', "\0", "\n", "\r", "'", '"', "\x1a"], ['\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'], $value);
             default:
-                throw new \RuntimeException('Method not yet implemented for this database');
+                throw new RuntimeException('Method not yet implemented for this database');
         }
     }
 
