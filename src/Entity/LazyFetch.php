@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Linio\Component\Database\Entity;
 
 use Linio\Component\Database\Exception\FetchException;
+use PDOException;
 use PDOStatement;
 
 class LazyFetch
@@ -26,7 +27,7 @@ class LazyFetch
     {
         try {
             $row = $this->pdoStatement->fetch(\PDO::FETCH_ASSOC);
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             throw new FetchException($e->getMessage(), $e->getCode(), $e);
         }
 

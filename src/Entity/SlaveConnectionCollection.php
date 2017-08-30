@@ -38,16 +38,18 @@ class SlaveConnectionCollection
      */
     protected $totalWeight;
 
-    public function add(Connection $connection)
+    public function add(Connection $connection): void
     {
         $this->connections[] = $connection;
         $this->originalWeights[] = $connection->getWeight();
+
         if (count($this->connections) == 1) {
             $this->hasOnlyOneConnection = true;
         } else {
             $this->hasOnlyOneConnection = false;
             $this->updateConnectionMap();
         }
+
         $this->isEmpty = false;
     }
 
@@ -75,18 +77,21 @@ class SlaveConnectionCollection
         return $this->isEmpty;
     }
 
-    protected function updateConnectionMap()
+    protected function updateConnectionMap(): void
     {
         $connectionMap = [];
         $totalWeight = 0;
         $connectionIndex = 0;
         $mapIndex = 1;
+
         foreach ($this->originalWeights as $weight) {
             $totalWeight += $weight;
+
             for ($i = 0; $i < $weight; $i++) {
                 $connectionMap[$mapIndex] = $connectionIndex;
                 $mapIndex++;
             }
+
             $connectionIndex++;
         }
 

@@ -17,14 +17,14 @@ use PHPUnit\Framework\TestCase;
  */
 class DatabaseManagerTest extends TestCase
 {
-    public function testIsConstructingService()
+    public function testIsConstructingService(): void
     {
         $actual = new DatabaseManager();
 
         $this->assertInstanceOf(DatabaseManager::class, $actual);
     }
 
-    public function testIsAddingNewConnection()
+    public function testIsAddingNewConnection(): void
     {
         $db = new DatabaseManager();
         $connectionOptions = [
@@ -39,7 +39,7 @@ class DatabaseManagerTest extends TestCase
         $this->assertTrue($actual);
     }
 
-    public function testIsThrowingExceptionWhenAddingMasterConnectionTwice()
+    public function testIsThrowingExceptionWhenAddingMasterConnectionTwice(): void
     {
         $db = new DatabaseManager();
         $connectionOptions = [
@@ -56,7 +56,7 @@ class DatabaseManagerTest extends TestCase
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
     }
 
-    public function testIsThrowingExceptionWhenAddingInvalidDatabaseDriver()
+    public function testIsThrowingExceptionWhenAddingInvalidDatabaseDriver(): void
     {
         $db = new DatabaseManager();
         $connectionOptions = [
@@ -72,7 +72,7 @@ class DatabaseManagerTest extends TestCase
         $db->addConnection('nop', $connectionOptions, DatabaseManager::ROLE_SLAVE);
     }
 
-    public function testIsThrowingExceptionWhenAddingInvalidDatabaseRole()
+    public function testIsThrowingExceptionWhenAddingInvalidDatabaseRole(): void
     {
         $db = new DatabaseManager();
         $connectionOptions = [
@@ -88,7 +88,7 @@ class DatabaseManagerTest extends TestCase
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, 'nop');
     }
 
-    public function testIsGettingConnections()
+    public function testIsGettingConnections(): void
     {
         $db = new DatabaseManager();
         $connectionOptions = [
@@ -106,7 +106,7 @@ class DatabaseManagerTest extends TestCase
         $this->assertInstanceOf(Connection::class, $actual[DatabaseManager::ROLE_MASTER]);
     }
 
-    public function testIsCreatingAndCommitingTransaction()
+    public function testIsCreatingAndCommitingTransaction(): void
     {
         $db = new DatabaseManager();
         $connectionOptions = [
@@ -123,7 +123,7 @@ class DatabaseManagerTest extends TestCase
         $this->assertTrue($db->commit());
     }
 
-    public function testIsCreatingAndRollingBackTransaction()
+    public function testIsCreatingAndRollingBackTransaction(): void
     {
         $db = new DatabaseManager();
         $connectionOptions = [
@@ -140,7 +140,7 @@ class DatabaseManagerTest extends TestCase
         $this->assertTrue($db->rollBack());
     }
 
-    public function testIsNotCreatingNestedTransactions()
+    public function testIsNotCreatingNestedTransactions(): void
     {
         $db = new DatabaseManager();
         $connectionOptions = [

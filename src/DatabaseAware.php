@@ -16,7 +16,7 @@ trait DatabaseAware
         return $this->database;
     }
 
-    public function setDatabase(DatabaseManager $database)
+    public function setDatabase(DatabaseManager $database): void
     {
         $this->database = $database;
     }

@@ -175,7 +175,7 @@ class PdoAdapter implements AdapterInterface
     /**
      * @throws TransactionException()
      */
-    public function beginTransaction()
+    public function beginTransaction(): void
     {
         try {
             $this->pdo->beginTransaction();
@@ -187,7 +187,7 @@ class PdoAdapter implements AdapterInterface
     /**
      * @throws TransactionException()
      */
-    public function commit()
+    public function commit(): void
     {
         try {
             $this->pdo->commit();
@@ -199,7 +199,7 @@ class PdoAdapter implements AdapterInterface
     /**
      * @throws TransactionException()
      */
-    public function rollBack()
+    public function rollBack(): void
     {
         try {
             $this->pdo->rollBack();
@@ -236,7 +236,7 @@ class PdoAdapter implements AdapterInterface
     /**
      * @throws DatabaseConnectionException
      */
-    protected function setPdo(string $driver, array $options)
+    protected function setPdo(string $driver, array $options): void
     {
         $this->validateAdapterOptions($driver, $options);
         switch ($driver) {
@@ -261,7 +261,7 @@ class PdoAdapter implements AdapterInterface
         }
     }
 
-    protected function validateAdapterOptions(string $driver, array $options)
+    protected function validateAdapterOptions(string $driver, array $options): void
     {
         switch ($driver) {
             case DatabaseManager::DRIVER_MYSQL:
@@ -276,7 +276,7 @@ class PdoAdapter implements AdapterInterface
         }
     }
 
-    protected function setMySqlConnection(array $options)
+    protected function setMySqlConnection(array $options): void
     {
         $dsn = sprintf('mysql:host=%s;port=%s;dbname=%s', $options['host'], $options['port'], $options['dbname']);
         $mySqlOptions = [
@@ -286,7 +286,7 @@ class PdoAdapter implements AdapterInterface
         $this->createPdoConnection($dsn, $options, $mySqlOptions);
     }
 
-    protected function setPgSqlConnection(array $options)
+    protected function setPgSqlConnection(array $options): void
     {
         $dsn = sprintf(
             'pgsql:host=%s;port=%s;dbname=%s;user=%s;password=%s',
@@ -300,21 +300,21 @@ class PdoAdapter implements AdapterInterface
         $this->createPdoConnection($dsn, $options);
     }
 
-    protected function setSqliteConnection(array $options)
+    protected function setSqliteConnection(array $options): void
     {
         $dsn = sprintf('sqlite:%s', $options['filepath']);
 
         $this->createPdoConnection($dsn);
     }
 
-    protected function setSqlServerConnection(array $options)
+    protected function setSqlServerConnection(array $options): void
     {
         $dsn = sprintf('sqlsrv:Server=%s,%s;Database=%s', $options['host'], $options['port'], $options['dbname']);
 
         $this->createPdoConnection($dsn, $options);
     }
 
-    protected function validateStandardDatabaseOptions(array $options)
+    protected function validateStandardDatabaseOptions(array $options): void
     {
         if (!isset($options['host'])) {
             throw new DatabaseConnectionException('Missing configuration parameter: host');
@@ -333,14 +333,14 @@ class PdoAdapter implements AdapterInterface
         }
     }
 
-    protected function validateSqliteOptions(array $options)
+    protected function validateSqliteOptions(array $options): void
     {
         if (!isset($options['filepath'])) {
             throw new DatabaseConnectionException('Missing configuration parameter: password');
         }
     }
 
-    protected function createPdoConnection(string $dsn, array $options = [], array $driverOptions = [])
+    protected function createPdoConnection(string $dsn, array $options = [], array $driverOptions = []): void
     {
         $defaultPdoOptions = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

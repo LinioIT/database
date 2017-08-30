@@ -61,17 +61,17 @@ interface AdapterInterface
     /**
      * @throws TransactionException
      */
-    public function beginTransaction();
+    public function beginTransaction(): void;
 
     /**
      * @throws TransactionException
      */
-    public function commit();
+    public function commit(): void;
 
     /**
      * @throws TransactionException
      */
-    public function rollBack();
+    public function rollBack(): void;
 
     /**
      * @throws DatabaseException

@@ -46,7 +46,7 @@ class DatabaseManager
     /**
      * @var bool
      */
-    protected $safeMode;
+    protected $safeMode = true;
 
     /**
      * @var bool
@@ -86,7 +86,7 @@ class DatabaseManager
         return true;
     }
 
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
@@ -302,7 +302,7 @@ class DatabaseManager
         return $escapedValues;
     }
 
-    protected function setAdapterOptions()
+    protected function setAdapterOptions(): void
     {
         $this->adapterOptions = [
             self::DRIVER_MYSQL => 'PdoAdapter',
@@ -322,7 +322,7 @@ class DatabaseManager
     /**
      * @throws DatabaseConnectionException
      */
-    protected function checkMasterExists()
+    protected function checkMasterExists(): void
     {
         if ($this->masterConnection) {
             throw new DatabaseConnectionException('Invalid role: only one master connection is allowed');
@@ -344,7 +344,7 @@ class DatabaseManager
     /**
      * @throws DatabaseConnectionException
      */
-    protected function checkValidDriver(string $driver)
+    protected function checkValidDriver(string $driver): void
     {
         if (!in_array($driver, [self::DRIVER_MYSQL, self::DRIVER_PGSQL, self::DRIVER_SQLITE, self::DRIVER_SQLSRV])) {
             throw new DatabaseConnectionException('Invalid driver: ' . $driver);
@@ -354,7 +354,7 @@ class DatabaseManager
     /**
      * @throws DatabaseConnectionException
      */
-    protected function checkValidRole(string $role)
+    protected function checkValidRole(string $role): void
     {
         if ($role == self::ROLE_MASTER) {
             $this->checkMasterExists();
@@ -383,7 +383,7 @@ class DatabaseManager
         return $this->masterConnection->getAdapter();
     }
 
-    protected function logQueryException(DatabaseException $exception, string $query, array $params)
+    protected function logQueryException(DatabaseException $exception, string $query, array $params): void
     {
         $message = sprintf('A database exception occurred [%s]', $exception->getMessage());
 
@@ -394,7 +394,7 @@ class DatabaseManager
         ]);
     }
 
-    protected function logException(DatabaseException $exception)
+    protected function logException(DatabaseException $exception): void
     {
         $message = sprintf('A database exception occurred [%s]', $exception->getMessage());
 

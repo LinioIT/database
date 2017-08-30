@@ -38,7 +38,7 @@ class Connection
         return $this->adapter;
     }
 
-    public function setAdapter(AdapterInterface $adapter)
+    public function setAdapter(AdapterInterface $adapter): void
     {
         $this->adapter = $adapter;
     }
@@ -48,7 +48,7 @@ class Connection
         return $this->driver;
     }
 
-    public function setDriver(string $driver)
+    public function setDriver(string $driver): void
     {
         $this->driver = $driver;
     }
@@ -58,7 +58,7 @@ class Connection
         return $this->options;
     }
 
-    public function setOptions(array $options)
+    public function setOptions(array $options): void
     {
         $this->options = $options;
     }
@@ -68,7 +68,7 @@ class Connection
         return $this->role;
     }
 
-    public function setRole(string $role)
+    public function setRole(string $role): void
     {
         $this->role = $role;
     }
@@ -78,7 +78,7 @@ class Connection
         return $this->weight;
     }
 
-    public function setWeight(int $weight)
+    public function setWeight(int $weight): void
     {
         $this->weight = $weight;
     }
