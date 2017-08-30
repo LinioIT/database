@@ -45,8 +45,6 @@ class PdoAdapterTest extends TestCase
             'username' => TEST_DATABASE_USERNAME,
             'password' => TEST_DATABASE_PASSWORD,
         ];
-        $this->pdo = $this->getPdo();
-        $this->createDatabase();
         $this->createDatabaseFixture();
         $this->adapter = new PdoAdapter(DatabaseManager::DRIVER_MYSQL, $this->driverOptions, DatabaseManager::ROLE_MASTER);
     }
@@ -341,11 +339,12 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals('test\\\'test\\ntest', $actual);
     }
 
-    protected function createDatabase()
+    protected function createDatabaseFixture()
     {
-        $this->pdo->exec(sprintf('CREATE DATABASE IF NOT EXISTS `%s`', $this->driverOptions['dbname']));
-        $this->pdo->exec(sprintf('DROP TABLE IF EXISTS `%s`.`departments`', $this->driverOptions['dbname']));
-        $this->pdo->exec(
+        $pdo = $this->getPdo();
+        $pdo->exec(sprintf('CREATE DATABASE IF NOT EXISTS `%s`', $this->driverOptions['dbname']));
+        $pdo->exec(sprintf('DROP TABLE IF EXISTS `%s`.`departments`', $this->driverOptions['dbname']));
+        $pdo->exec(
             sprintf(
                 'CREATE TABLE IF NOT EXISTS `%s`.`departments` (
           `dept_id` int(10) NOT NULL AUTO_INCREMENT,
@@ -355,12 +354,7 @@ class PdoAdapterTest extends TestCase
                 $this->driverOptions['dbname']
             )
         );
-    }
-
-    protected function createDatabaseFixture()
-    {
-        $this->pdo->exec(sprintf('TRUNCATE TABLE `%s`.`departments`', $this->driverOptions['dbname']));
-        $this->pdo->exec(
+        $pdo->exec(
             sprintf(
                 "INSERT INTO `%s`.`departments` (`dept_no`, `dept_name`) VALUES ('d009','Customer Service'),('d005','Development'),('d002','Finance'),
           ('d003','Human Resources'),('d001','Marketing'),('d004','Production'),('d006','Quality Management'),('d008','Research'),('d007','Sales');",
