@@ -8,11 +8,12 @@ use Linio\Component\Database\DatabaseManager;
 use Linio\Component\Database\Entity\LazyFetch;
 use Linio\Component\Database\Exception\DatabaseConnectionException;
 use Linio\Component\Database\Exception\DatabaseException;
+use Linio\Component\Database\Exception\FetchException;
 use Linio\Component\Database\Exception\InvalidQueryException;
+use Linio\Component\Database\Exception\TransactionException;
 use PDO;
 use PDOException;
 use PDOStatement;
-use RuntimeException;
 
 class PdoAdapter implements AdapterInterface
 {
@@ -37,7 +38,7 @@ class PdoAdapter implements AdapterInterface
 
     /**
      * @throws InvalidQueryException
-     * @throws DatabaseException
+     * @throws FetchException
      */
     public function fetchAll(string $query, array $params = []): array
     {
@@ -45,7 +46,7 @@ class PdoAdapter implements AdapterInterface
         try {
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            throw new DatabaseException($e->getMessage(), $e->getCode(), $e);
+            throw new FetchException($e->getMessage(), $e->getCode(), $e);
         }
 
         return $rows;
@@ -53,7 +54,7 @@ class PdoAdapter implements AdapterInterface
 
     /**
      * @throws InvalidQueryException
-     * @throws DatabaseException
+     * @throws FetchException
      */
     public function fetchOne(string $query, array $params = []): array
     {
@@ -61,7 +62,7 @@ class PdoAdapter implements AdapterInterface
         try {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            throw new DatabaseException($e->getMessage(), $e->getCode(), $e);
+            throw new FetchException($e->getMessage(), $e->getCode(), $e);
         }
 
         if ($row === false) {
@@ -73,7 +74,7 @@ class PdoAdapter implements AdapterInterface
 
     /**
      * @throws InvalidQueryException
-     * @throws DatabaseException
+     * @throws FetchException
      */
     public function fetchValue(string $query, array $params = [])
     {
@@ -81,7 +82,7 @@ class PdoAdapter implements AdapterInterface
         try {
             $values = $stmt->fetch(PDO::FETCH_NUM);
         } catch (PDOException $e) {
-            throw new DatabaseException($e->getMessage(), $e->getCode(), $e);
+            throw new FetchException($e->getMessage(), $e->getCode(), $e);
         }
 
         if ($values === false) {
@@ -98,7 +99,7 @@ class PdoAdapter implements AdapterInterface
 
     /**
      * @throws InvalidQueryException
-     * @throws DatabaseException
+     * @throws FetchException
      */
     public function fetchKeyPairs(string $query, array $params = []): array
     {
@@ -106,7 +107,7 @@ class PdoAdapter implements AdapterInterface
         try {
             $keyPairs = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         } catch (PDOException $e) {
-            throw new DatabaseException($e->getMessage(), $e->getCode(), $e);
+            throw new FetchException($e->getMessage(), $e->getCode(), $e);
         }
 
         return $keyPairs;
@@ -114,7 +115,7 @@ class PdoAdapter implements AdapterInterface
 
     /**
      * @throws InvalidQueryException
-     * @throws DatabaseException
+     * @throws FetchException
      */
     public function fetchColumn(string $query, array $params = [], int $columnIndex = 0): array
     {
@@ -122,14 +123,14 @@ class PdoAdapter implements AdapterInterface
         try {
             $rows = $stmt->fetchAll(PDO::FETCH_COLUMN, $columnIndex);
         } catch (PDOException $e) {
-            throw new DatabaseException($e->getMessage(), $e->getCode(), $e);
+            throw new FetchException($e->getMessage(), $e->getCode(), $e);
         }
 
         return $rows;
     }
 
     /**
-     * @throws DatabaseException
+     * @throws InvalidQueryException
      */
     public function fetchLazy(string $query, array $params = []): LazyFetch
     {
@@ -140,7 +141,6 @@ class PdoAdapter implements AdapterInterface
 
     /**
      * @throws InvalidQueryException
-     * @throws DatabaseException
      */
     public function execute(string $query, array $params = []): int
     {
@@ -173,38 +173,38 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @throws DatabaseException
+     * @throws TransactionException()
      */
     public function beginTransaction()
     {
         try {
             $this->pdo->beginTransaction();
         } catch (PDOException $exception) {
-            throw new DatabaseException($exception->getMessage(), $exception->getCode(), $exception);
+            throw new TransactionException($exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 
     /**
-     * @throws DatabaseException
+     * @throws TransactionException()
      */
     public function commit()
     {
         try {
             $this->pdo->commit();
         } catch (PDOException $exception) {
-            throw new DatabaseException($exception->getMessage(), $exception->getCode(), $exception);
+            throw new TransactionException($exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 
     /**
-     * @throws DatabaseException
+     * @throws TransactionException()
      */
     public function rollBack()
     {
         try {
             $this->pdo->rollBack();
         } catch (PDOException $exception) {
-            throw new DatabaseException($exception->getMessage(), $exception->getCode(), $exception);
+            throw new TransactionException($exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 
@@ -221,7 +221,7 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws DatabaseException
      */
     public function escapeValue(string $value): string
     {
@@ -229,7 +229,7 @@ class PdoAdapter implements AdapterInterface
             case DatabaseManager::DRIVER_MYSQL:
                 return str_replace(['\\', "\0", "\n", "\r", "'", '"', "\x1a"], ['\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'], $value);
             default:
-                throw new RuntimeException('Method not yet implemented for this database');
+                throw new DatabaseException('Method not yet implemented for this database');
         }
     }
 

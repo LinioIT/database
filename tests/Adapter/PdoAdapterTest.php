@@ -6,8 +6,8 @@ namespace Linio\Component\Database\Adapter;
 
 use Linio\Component\Database\DatabaseManager;
 use Linio\Component\Database\Entity\LazyFetch;
-use Linio\Component\Database\Exception\DatabaseException;
 use Linio\Component\Database\Exception\InvalidQueryException;
+use Linio\Component\Database\Exception\TransactionException;
 use PDO;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
@@ -299,13 +299,13 @@ class PdoAdapterTest extends TestCase
 
     public function testIsNotCommittingTransactionWithoutCreating()
     {
-        $this->expectException(DatabaseException::class);
+        $this->expectException(TransactionException::class);
         $this->adapter->commit();
     }
 
     public function testIsNotRollingBackTransactionWithoutCreating()
     {
-        $this->expectException(DatabaseException::class);
+        $this->expectException(TransactionException::class);
         $this->adapter->rollBack();
     }
 

@@ -9,6 +9,10 @@ use Linio\Component\Database\Entity\Connection;
 use Linio\Component\Database\Entity\LazyFetch;
 use Linio\Component\Database\Entity\SlaveConnectionCollection;
 use Linio\Component\Database\Exception\DatabaseConnectionException;
+use Linio\Component\Database\Exception\DatabaseException;
+use Linio\Component\Database\Exception\FetchException;
+use Linio\Component\Database\Exception\InvalidQueryException;
+use Linio\Component\Database\Exception\TransactionException;
 
 class DatabaseManager
 {
@@ -85,48 +89,77 @@ class DatabaseManager
         ];
     }
 
+    /**
+     * @throws InvalidQueryException
+     * @throws FetchException
+     */
     public function fetchAll(string $query, array $params = [], bool $forceMasterConnection = false): array
     {
         return $this->getReadAdapter($forceMasterConnection)
             ->fetchAll($query, $params);
     }
 
+    /**
+     * @throws InvalidQueryException
+     * @throws FetchException
+     */
     public function fetchOne(string $query, array $params = [], bool $forceMasterConnection = false): array
     {
         return $this->getReadAdapter($forceMasterConnection)
             ->fetchOne($query, $params);
     }
 
+    /**
+     * @throws InvalidQueryException
+     * @throws FetchException
+     */
     public function fetchValue(string $query, array $params = [], bool $forceMasterConnection = false)
     {
         return $this->getReadAdapter($forceMasterConnection)
             ->fetchValue($query, $params);
     }
 
+    /**
+     * @throws InvalidQueryException
+     * @throws FetchException
+     */
     public function fetchKeyPairs(string $query, array $params = [], bool $forceMasterConnection = false): array
     {
         return $this->getReadAdapter($forceMasterConnection)
             ->fetchKeyPairs($query, $params);
     }
 
+    /**
+     * @throws InvalidQueryException
+     * @throws FetchException
+     */
     public function fetchColumn(string $query, array $params = [], int $columnIndex = 0, bool $forceMasterConnection = false): array
     {
         return $this->getReadAdapter($forceMasterConnection)
             ->fetchColumn($query, $params, $columnIndex);
     }
 
+    /**
+     * @throws InvalidQueryException
+     */
     public function fetchLazy(string $query, array $params = [], bool $forceMasterConnection = false): LazyFetch
     {
         return $this->getReadAdapter($forceMasterConnection)
             ->fetchLazy($query, $params);
     }
 
+    /**
+     * @throws InvalidQueryException
+     */
     public function execute(string $query, array $params = []): int
     {
         return $this->getWriteAdapter()
             ->execute($query, $params);
     }
 
+    /**
+     * @throws TransactionException
+     */
     public function beginTransaction(): bool
     {
         if ($this->hasActiveTransaction) {
@@ -139,6 +172,9 @@ class DatabaseManager
         return true;
     }
 
+    /**
+     * @throws TransactionException
+     */
     public function commit(): bool
     {
         if (!$this->hasActiveTransaction) {
@@ -151,6 +187,9 @@ class DatabaseManager
         return true;
     }
 
+    /**
+     * @throws TransactionException
+     */
     public function rollBack(): bool
     {
         if (!$this->hasActiveTransaction) {
@@ -163,16 +202,25 @@ class DatabaseManager
         return true;
     }
 
+    /**
+     * @throws DatabaseException
+     */
     public function getLastInsertId(string $name = null)
     {
         return $this->getWriteAdapter()->getLastInsertId($name);
     }
 
+    /**
+     * @throws DatabaseException
+     */
     public function escapeValue(string $value): string
     {
         return $this->getWriteAdapter()->escapeValue($value);
     }
 
+    /**
+     * @throws DatabaseException
+     */
     public function escapeValues(array $values): array
     {
         $escapedValues = [];

@@ -7,8 +7,9 @@ namespace Linio\Component\Database\Adapter;
 use Linio\Component\Database\Entity\LazyFetch;
 use Linio\Component\Database\Exception\DatabaseConnectionException;
 use Linio\Component\Database\Exception\DatabaseException;
+use Linio\Component\Database\Exception\FetchException;
 use Linio\Component\Database\Exception\InvalidQueryException;
-use RuntimeException;
+use Linio\Component\Database\Exception\TransactionException;
 
 interface AdapterInterface
 {
@@ -19,31 +20,31 @@ interface AdapterInterface
 
     /**
      * @throws InvalidQueryException
-     * @throws DatabaseException
+     * @throws FetchException
      */
     public function fetchAll(string $query, array $params = []): array;
 
     /**
      * @throws InvalidQueryException
-     * @throws DatabaseException
+     * @throws FetchException
      */
     public function fetchOne(string $query, array $params = []): array;
 
     /**
      * @throws InvalidQueryException
-     * @throws DatabaseException
+     * @throws FetchException
      */
     public function fetchValue(string $query, array $params = []);
 
     /**
      * @throws InvalidQueryException
-     * @throws DatabaseException
+     * @throws FetchException
      */
     public function fetchKeyPairs(string $query, array $params = []): array;
 
     /**
      * @throws InvalidQueryException
-     * @throws DatabaseException
+     * @throws FetchException
      */
     public function fetchColumn(string $query, array $params = [], int $columnIndex = 0): array;
 
@@ -54,22 +55,21 @@ interface AdapterInterface
 
     /**
      * @throws InvalidQueryException
-     * @throws DatabaseException
      */
     public function execute(string $query, array $params = []): int;
 
     /**
-     * @throws DatabaseException
+     * @throws TransactionException
      */
     public function beginTransaction();
 
     /**
-     * @throws DatabaseException
+     * @throws TransactionException
      */
     public function commit();
 
     /**
-     * @throws DatabaseException
+     * @throws TransactionException
      */
     public function rollBack();
 
@@ -79,7 +79,7 @@ interface AdapterInterface
     public function getLastInsertId(string $name = null);
 
     /**
-     * @throws RuntimeException support for the database has not been implemented yet
+     * @throws DatabaseException Support for the database has not been implemented yet
      */
     public function escapeValue(string $value);
 }
