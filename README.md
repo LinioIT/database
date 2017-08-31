@@ -43,7 +43,7 @@ $container['db'] = function() {
     $db->addConnection(DatabaseManager::DRIVER_MYSQL, $driverOptions);
 
     return $db;
-}
+};
 
 $rows = $container['db']->fetchAll("SELECT * FROM `table` WHERE `field` = :value", ['value' => 'test']);
 
@@ -69,8 +69,7 @@ To prevent replication lag issues, this library uses the safe mode by default. T
 ```php
 <?php
 
-    $db = new DatabaseManager(false);
-
+$db = new DatabaseManager(false);
 ```
 
 ## Methods
@@ -96,10 +95,14 @@ To prevent replication lag issues, this library uses the safe mode by default. T
 	$bigSlaveDbOptions = ['host' => '127.0.0.1', 'port' => 3306, 'dbname' => 'big_slave_db', 'username' => 'root','password' => ''];
     $db->addConnection(DatabaseManager::DRIVER_MYSQL, $bigSlaveDbOptions, DatabaseManager::ROLE_SLAVE, 5);
 
-	$smallSlaveDbOptions = ['host' => '127.0.0.1', 'port' => 3306, 'dbname' => 'small_slave_db', 'username' => 'root','password' => ''];
-    $db->addConnection(DatabaseManager::DRIVER_MYSQL, $smallSlaveDbOptions, DatabaseManager::ROLE_SLAVE, 2);
+$masterDbOptions = ['host' => '127.0.0.1', 'port' => 3306, 'dbname' => 'master_db', 'username' => 'root','password' => ''];
+$db->addConnection(DatabaseManager::DRIVER_MYSQL, $masterDbOptions, DatabaseManager::ROLE_MASTER);
 
+$bigSlaveDbOptions = ['host' => '127.0.0.1', 'port' => 3306, 'dbname' => 'big_slave_db', 'username' => 'root','password' => ''];
+$db->addConnection(DatabaseManager::DRIVER_MYSQL, $bigSlaveDbOptions, DatabaseManager::ROLE_SLAVE, 5);
 
+$smallSlaveDbOptions = ['host' => '127.0.0.1', 'port' => 3306, 'dbname' => 'small_slave_db', 'username' => 'root','password' => ''];
+$db->addConnection(DatabaseManager::DRIVER_MYSQL, $smallSlaveDbOptions, DatabaseManager::ROLE_SLAVE, 2);
 ```
 
 ### `getConnections`
