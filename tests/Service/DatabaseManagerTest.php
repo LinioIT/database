@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Linio\Component\Database;
 
+use Linio\Component\Database\Entity\Connection;
+use Linio\Component\Database\Exception\DatabaseConnectionException;
+use PHPUnit\Framework\TestCase;
+
 /**
  * @constant TEST_DATABASE_HOST
  * @constant TEST_DATABASE_PORT
@@ -11,13 +15,13 @@ namespace Linio\Component\Database;
  * @constant TEST_DATABASE_USERNAME
  * @constant TEST_DATABASE_PASSWORD
  */
-class DatabaseManagerTest extends \PHPUnit_Framework_TestCase
+class DatabaseManagerTest extends TestCase
 {
     public function testIsConstructingService()
     {
         $actual = new DatabaseManager();
 
-        $this->assertInstanceOf('Linio\Component\Database\DatabaseManager', $actual);
+        $this->assertInstanceOf(DatabaseManager::class, $actual);
     }
 
     public function testIsAddingNewConnection()
@@ -35,9 +39,6 @@ class DatabaseManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($actual);
     }
 
-    /**
-     * @expectedException \Linio\Component\Database\Exception\DatabaseConnectionException
-     */
     public function testIsThrowingExceptionWhenAddingMasterConnectionTwice()
     {
         $db = new DatabaseManager();
@@ -49,13 +50,12 @@ class DatabaseManagerTest extends \PHPUnit_Framework_TestCase
             'password' => TEST_DATABASE_PASSWORD,
         ];
 
-        $actual = $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
-        $actual = $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
+        $this->expectException(DatabaseConnectionException::class);
+
+        $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
+        $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
     }
 
-    /**
-     * @expectedException \Linio\Component\Database\Exception\DatabaseConnectionException
-     */
     public function testIsThrowingExceptionWhenAddingInvalidDatabaseDriver()
     {
         $db = new DatabaseManager();
@@ -67,12 +67,11 @@ class DatabaseManagerTest extends \PHPUnit_Framework_TestCase
             'password' => 'nop',
         ];
 
-        $actual = $db->addConnection('nop', $connectionOptions, DatabaseManager::ROLE_SLAVE);
+        $this->expectException(DatabaseConnectionException::class);
+
+        $db->addConnection('nop', $connectionOptions, DatabaseManager::ROLE_SLAVE);
     }
 
-    /**
-     * @expectedException \Linio\Component\Database\Exception\DatabaseConnectionException
-     */
     public function testIsThrowingExceptionWhenAddingInvalidDatabaseRole()
     {
         $db = new DatabaseManager();
@@ -84,7 +83,9 @@ class DatabaseManagerTest extends \PHPUnit_Framework_TestCase
             'password' => 'nop',
         ];
 
-        $actual = $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, 'nop');
+        $this->expectException(DatabaseConnectionException::class);
+
+        $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, 'nop');
     }
 
     public function testIsGettingConnections()
@@ -102,10 +103,10 @@ class DatabaseManagerTest extends \PHPUnit_Framework_TestCase
         $actual = $db->getConnections(DatabaseManager::ROLE_MASTER);
 
         $this->assertInternalType('array', $actual);
-        $this->assertInstanceOf('\Linio\Component\Database\Entity\Connection', $actual[DatabaseManager::ROLE_MASTER]);
+        $this->assertInstanceOf(Connection::class, $actual[DatabaseManager::ROLE_MASTER]);
     }
 
-    public function testIsCreatingandCommitingTransaction()
+    public function testIsCreatingAndCommitingTransaction()
     {
         $db = new DatabaseManager();
         $connectionOptions = [
@@ -122,7 +123,7 @@ class DatabaseManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($db->commit());
     }
 
-    public function testIsCreatingandRollingBackTransaction()
+    public function testIsCreatingAndRollingBackTransaction()
     {
         $db = new DatabaseManager();
         $connectionOptions = [
