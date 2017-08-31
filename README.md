@@ -69,6 +69,8 @@ To prevent replication lag issues, this library uses the safe mode by default. T
 ```php
 <?php
 
+use Linio\Component\Database\DatabaseManager;
+
 $db = new DatabaseManager(false);
 ```
 
@@ -128,6 +130,9 @@ array(2) {
 ```php
 <?php
 
+use Linio\Component\Database\Exception\FetchException;
+use Linio\Component\Database\Exception\InvalidQueryException;
+
 /**
  * @throws InvalidQueryException
  * @throws FetchException
@@ -164,6 +169,9 @@ array(2) {
 ```php
 <?php
 
+use Linio\Component\Database\Exception\FetchException;
+use Linio\Component\Database\Exception\InvalidQueryException;
+
 /**
  * @throws InvalidQueryException
  * @throws FetchException
@@ -191,6 +199,9 @@ array(2) {
 ```php
 <?php
 
+use Linio\Component\Database\Exception\FetchException;
+use Linio\Component\Database\Exception\InvalidQueryException;
+
 /**
  * @throws InvalidQueryException
  * @throws FetchException
@@ -211,6 +222,9 @@ string(6) "name 1"
 
 ```php
 <?php
+
+use Linio\Component\Database\Exception\FetchException;
+use Linio\Component\Database\Exception\InvalidQueryException;
 
 /**
  * @throws InvalidQueryException
@@ -237,6 +251,9 @@ array(2) {
 
 ```php
 <?php
+
+use Linio\Component\Database\Exception\FetchException;
+use Linio\Component\Database\Exception\InvalidQueryException;
 
 /**
  * @throws InvalidQueryException
@@ -287,6 +304,8 @@ In this example, when this `while` loop reached the end of the result set, the `
 ```php
 <?php
 
+use Linio\Component\Database\Exception\InvalidQueryException;
+
 /**
  * @throws InvalidQueryException
  */
@@ -316,6 +335,8 @@ int(3)
 ```php
 <?php
 
+use Linio\Component\Database\Exception\DatabaseException;
+
 /**
  * @throws DatabaseException
  */
@@ -336,6 +357,8 @@ string(17) "Linio\\'s Library"
 
 ```php
 <?php
+
+use Linio\Component\Database\Exception\DatabaseException;
 
 /**
  * @throws DatabaseException
