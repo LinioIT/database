@@ -26,6 +26,7 @@ return PhpCsFixer\Config::create()
         'pre_increment' => false,
         'single_line_comment_style' => true,
         'ternary_to_null_coalescing' => true,
+        'void_return' => true,
     ])
     ->setFinder($finder)
     ->setUsingCache(true)

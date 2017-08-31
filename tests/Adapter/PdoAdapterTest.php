@@ -36,7 +36,7 @@ class PdoAdapterTest extends TestCase
      */
     protected $driverOptions;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->driverOptions = [
             'host' => TEST_DATABASE_HOST,
@@ -49,12 +49,12 @@ class PdoAdapterTest extends TestCase
         $this->adapter = new PdoAdapter(DatabaseManager::DRIVER_MYSQL, $this->driverOptions, DatabaseManager::ROLE_MASTER);
     }
 
-    public function testIsConstructing()
+    public function testIsConstructing(): void
     {
         $this->assertInstanceOf(PdoAdapter::class, $this->adapter);
     }
 
-    public function testIsSettingPdoDefaultErrorModeAttributeToException()
+    public function testIsSettingPdoDefaultErrorModeAttributeToException(): void
     {
         $testAdapter = new PdoAdapter(DatabaseManager::DRIVER_MYSQL, $this->driverOptions, DatabaseManager::ROLE_MASTER);
 
@@ -63,7 +63,7 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals(PDO::ERRMODE_EXCEPTION, $adapterPdo->getAttribute(PDO::ATTR_ERRMODE));
     }
 
-    public function testIsSettingPdoDefaultErrorModeAttributeToExceptionWithoutUsernameAndPassword()
+    public function testIsSettingPdoDefaultErrorModeAttributeToExceptionWithoutUsernameAndPassword(): void
     {
         $testAdapter = new PdoAdapter(DatabaseManager::DRIVER_SQLITE, ['filepath' => '/tmp/test-db.sqlite'], DatabaseManager::ROLE_MASTER);
 
@@ -72,7 +72,7 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals(PDO::ERRMODE_EXCEPTION, $adapterPdo->getAttribute(PDO::ATTR_ERRMODE));
     }
 
-    public function testIsSettingPdoAttributes()
+    public function testIsSettingPdoAttributes(): void
     {
         $testOptions = [
             'pdo_attributes' => [
@@ -91,7 +91,7 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals(PDO::ERRMODE_WARNING, $adapterPdo->getAttribute(PDO::ATTR_ERRMODE));
     }
 
-    public function testIsFetchingAllWithoutParams()
+    public function testIsFetchingAllWithoutParams(): void
     {
         $actual = $this->adapter->fetchAll('SELECT * FROM `departments` ORDER BY `dept_no`');
 
@@ -105,7 +105,7 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals('Marketing', $firstRow['dept_name']);
     }
 
-    public function testIsFetchingAllWithNamelessParam()
+    public function testIsFetchingAllWithNamelessParam(): void
     {
         $actual = $this->adapter->fetchAll('SELECT * FROM `departments` WHERE `dept_no` = ?', ['d001']);
 
@@ -119,7 +119,7 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals('Marketing', $firstRow['dept_name']);
     }
 
-    public function testIsFetchingAllWithNamedParam()
+    public function testIsFetchingAllWithNamedParam(): void
     {
         $actual = $this->adapter->fetchAll('SELECT * FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd001']);
 
@@ -133,7 +133,7 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals('Marketing', $firstRow['dept_name']);
     }
 
-    public function testIsFetchingAllWithEmptyResult()
+    public function testIsFetchingAllWithEmptyResult(): void
     {
         $actual = $this->adapter->fetchAll('SELECT * FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd099']);
 
@@ -141,7 +141,7 @@ class PdoAdapterTest extends TestCase
         $this->assertEmpty($actual);
     }
 
-    public function testIsFetchingOneWithNamedParam()
+    public function testIsFetchingOneWithNamedParam(): void
     {
         $actual = $this->adapter->fetchOne('SELECT * FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd001']);
 
@@ -153,7 +153,7 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals('Marketing', $actual['dept_name']);
     }
 
-    public function testIsFetchingOneWithEmptyResult()
+    public function testIsFetchingOneWithEmptyResult(): void
     {
         $actual = $this->adapter->fetchOne('SELECT * FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd099']);
 
@@ -161,21 +161,21 @@ class PdoAdapterTest extends TestCase
         $this->assertEmpty($actual);
     }
 
-    public function testIsFetchingValueWithNamedParam()
+    public function testIsFetchingValueWithNamedParam(): void
     {
         $actual = $this->adapter->fetchValue('SELECT `dept_name` FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd001']);
 
         $this->assertEquals('Marketing', $actual);
     }
 
-    public function testIsFetchingValueWithEmptyResult()
+    public function testIsFetchingValueWithEmptyResult(): void
     {
         $actual = $this->adapter->fetchValue('SELECT `dept_name` FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd099']);
 
         $this->assertNull($actual);
     }
 
-    public function testIsFetchingKeyPairWithNamedParam()
+    public function testIsFetchingKeyPairWithNamedParam(): void
     {
         $actual = $this->adapter->fetchKeyPairs('SELECT `dept_no`,`dept_name` FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd001']);
 
@@ -184,7 +184,7 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals('Marketing', $actual['d001']);
     }
 
-    public function testIsFetchingKeyPairWithEmptyResult()
+    public function testIsFetchingKeyPairWithEmptyResult(): void
     {
         $actual = $this->adapter->fetchKeyPairs('SELECT `dept_no`,`dept_name` FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd099']);
 
@@ -192,7 +192,7 @@ class PdoAdapterTest extends TestCase
         $this->assertEmpty($actual);
     }
 
-    public function testIsFetchingColumnWithIndexZero()
+    public function testIsFetchingColumnWithIndexZero(): void
     {
         $actual = $this->adapter->fetchColumn('SELECT `dept_no`,`dept_name` FROM `departments` ORDER BY `dept_no`', [], 0);
 
@@ -202,7 +202,7 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals('d001', $firstValue);
     }
 
-    public function testIsFetchingColumnWithIndexOne()
+    public function testIsFetchingColumnWithIndexOne(): void
     {
         $actual = $this->adapter->fetchColumn('SELECT `dept_no`,`dept_name` FROM `departments` ORDER BY `dept_no`', [], 1);
 
@@ -212,7 +212,7 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals('Marketing', $firstValue);
     }
 
-    public function testIsFetchingLazy()
+    public function testIsFetchingLazy(): void
     {
         $lazyFetch = $this->adapter->fetchLazy('SELECT * FROM `departments` ORDER BY `dept_no`');
 
@@ -243,7 +243,7 @@ class PdoAdapterTest extends TestCase
         $this->assertEmpty($endOfRows);
     }
 
-    public function testIsExecutingInserts()
+    public function testIsExecutingInserts(): void
     {
         $actual = $this->adapter->execute(
             'INSERT INTO `departments` (`dept_no`, `dept_name`) VALUES (?, ?), (?, ?)',
@@ -256,7 +256,7 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals(2, $count);
     }
 
-    public function testIsExecutingUpdates()
+    public function testIsExecutingUpdates(): void
     {
         $actual = $this->adapter->execute('UPDATE `departments` SET `dept_name` = ?', ['Test Dept']);
 
@@ -266,14 +266,14 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals(9, $count);
     }
 
-    public function testIsExecutingUpdatesWithNoMatched()
+    public function testIsExecutingUpdatesWithNoMatched(): void
     {
         $actual = $this->adapter->execute('UPDATE `departments` SET `dept_name` = ? WHERE `dept_no` = ?', ['Test Dept', 'd010']);
 
         $this->assertEquals(0, $actual);
     }
 
-    public function testIsExecutingMultipleStatementsWithoutEmulatePrepares()
+    public function testIsExecutingMultipleStatementsWithoutEmulatePrepares(): void
     {
         $driverOptions = $this->driverOptions;
         $driverOptions['pdo_attributes'] = [
@@ -291,25 +291,25 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals(9, $actual);
     }
 
-    public function testIsThrowingExceptionWithInvalidQuery()
+    public function testIsThrowingExceptionWithInvalidQuery(): void
     {
         $this->expectException(InvalidQueryException::class);
         $this->adapter->execute('UPDATE `nop` SET `dept_name` = ? WHERE `dept_no` = ?', ['Test Dept', 'd010']);
     }
 
-    public function testIsNotCommittingTransactionWithoutCreating()
+    public function testIsNotCommittingTransactionWithoutCreating(): void
     {
         $this->expectException(TransactionException::class);
         $this->adapter->commit();
     }
 
-    public function testIsNotRollingBackTransactionWithoutCreating()
+    public function testIsNotRollingBackTransactionWithoutCreating(): void
     {
         $this->expectException(TransactionException::class);
         $this->adapter->rollBack();
     }
 
-    public function testIsGettingLastInsertId()
+    public function testIsGettingLastInsertId(): void
     {
         $this->adapter->execute('INSERT INTO `departments` (`dept_no`, `dept_name`) VALUES (?, ?)', ['d010', 'Test Dept 110']);
 
@@ -318,7 +318,7 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals(10, $actual);
     }
 
-    public function testIsEscapingValue()
+    public function testIsEscapingValue(): void
     {
         $value = "test'test\ntest";
 
@@ -327,7 +327,7 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals('test\\\'test\\ntest', $actual);
     }
 
-    protected function createDatabaseFixture()
+    protected function createDatabaseFixture(): void
     {
         $pdo = $this->getPdo();
         $pdo->exec(sprintf('CREATE DATABASE IF NOT EXISTS `%s`', $this->driverOptions['dbname']));
