@@ -417,11 +417,24 @@ Reasons:
 - Malformed SQL query
 - Wrong table or field names
 
-### `Linio\Component\Database\Exception\DatabaseException`
+### `Linio\Component\Database\Exception\FetchException`
 
 Reasons:
 
 - Lost connection to the database after creating the statement
+
+### `Linio\Component\Database\Exception\TransactionException`
+
+Reasons:
+
+- Failure to begin, commit or rollback a transaction
+
+### `Linio\Component\Database\Exception\DatabaseException`
+
+Reasons:
+
+- All exceptions extend from this
+- Non-specific errors
 
 ## Drivers
 
