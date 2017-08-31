@@ -43,7 +43,7 @@ $container['db'] = function() {
     $db->addConnection(DatabaseManager::DRIVER_MYSQL, $driverOptions);
 
     return $db;
-}
+};
 
 $rows = $container['db']->fetchAll("SELECT * FROM `table` WHERE `field` = :value", ['value' => 'test']);
 
@@ -69,8 +69,9 @@ To prevent replication lag issues, this library uses the safe mode by default. T
 ```php
 <?php
 
-    $db = new DatabaseManager(false);
+use Linio\Component\Database\DatabaseManager;
 
+$db = new DatabaseManager(false);
 ```
 
 ## Methods
@@ -80,26 +81,16 @@ To prevent replication lag issues, this library uses the safe mode by default. T
 ```php
 <?php
 
-    /**
-     * @param string $driver
-     * @param array $options
-     * @param string $role
-     * @param int $weight
-     *
-     * @return bool
-     */
-    public function addConnection($driver, array $options, $role = self::ROLE_MASTER, $weight = 1) : bool;
+public function addConnection(string $driver, array $options, string $role = DatabaseManager::ROLE_MASTER, int $weight = 1): bool;
 
-	$masterDbOptions = ['host' => '127.0.0.1', 'port' => 3306, 'dbname' => 'master_db', 'username' => 'root','password' => ''];
-    $db->addConnection(DatabaseManager::DRIVER_MYSQL, $masterDbOptions, DatabaseManager::ROLE_MASTER);
+$masterDbOptions = ['host' => '127.0.0.1', 'port' => 3306, 'dbname' => 'master_db', 'username' => 'root','password' => ''];
+$db->addConnection(DatabaseManager::DRIVER_MYSQL, $masterDbOptions, DatabaseManager::ROLE_MASTER);
 
-	$bigSlaveDbOptions = ['host' => '127.0.0.1', 'port' => 3306, 'dbname' => 'big_slave_db', 'username' => 'root','password' => ''];
-    $db->addConnection(DatabaseManager::DRIVER_MYSQL, $bigSlaveDbOptions, DatabaseManager::ROLE_SLAVE, 5);
+$bigSlaveDbOptions = ['host' => '127.0.0.1', 'port' => 3306, 'dbname' => 'big_slave_db', 'username' => 'root','password' => ''];
+$db->addConnection(DatabaseManager::DRIVER_MYSQL, $bigSlaveDbOptions, DatabaseManager::ROLE_SLAVE, 5);
 
-	$smallSlaveDbOptions = ['host' => '127.0.0.1', 'port' => 3306, 'dbname' => 'small_slave_db', 'username' => 'root','password' => ''];
-    $db->addConnection(DatabaseManager::DRIVER_MYSQL, $smallSlaveDbOptions, DatabaseManager::ROLE_SLAVE, 2);
-
-
+$smallSlaveDbOptions = ['host' => '127.0.0.1', 'port' => 3306, 'dbname' => 'small_slave_db', 'username' => 'root','password' => ''];
+$db->addConnection(DatabaseManager::DRIVER_MYSQL, $smallSlaveDbOptions, DatabaseManager::ROLE_SLAVE, 2);
 ```
 
 ### `getConnections`
@@ -139,14 +130,14 @@ array(2) {
 ```php
 <?php
 
+use Linio\Component\Database\Exception\FetchException;
+use Linio\Component\Database\Exception\InvalidQueryException;
+
 /**
- * @param string $query
- * @param array $params
- * @param bool $forceMasterConnection
- *
- * @return array
+ * @throws InvalidQueryException
+ * @throws FetchException
  */
-public function fetchAll($query, array $params = [], bool $forceMasterConnection = false) : array;
+public function fetchAll(string $query, array $params = [], bool $forceMasterConnection = false): array;
 
 $rows = $db->fetchAll("SELECT `id`,`name` FROM `table` WHERE `id` > ?", [1]);
 
@@ -178,14 +169,14 @@ array(2) {
 ```php
 <?php
 
+use Linio\Component\Database\Exception\FetchException;
+use Linio\Component\Database\Exception\InvalidQueryException;
+
 /**
- * @param string $query
- * @param array $params
- * @param bool $forceMasterConnection
- *
- * @return array
+ * @throws InvalidQueryException
+ * @throws FetchException
  */
-public function fetchOne($query, array $params = [], bool $forceMasterConnection = false) : array;
+public function fetchOne(string $query, array $params = [], bool $forceMasterConnection = false): array;
 
 $row = $db->fetchOne("SELECT `id`,`name` FROM `table` WHERE `id` = :id", ['id' => 1]);
 
@@ -208,14 +199,14 @@ array(2) {
 ```php
 <?php
 
+use Linio\Component\Database\Exception\FetchException;
+use Linio\Component\Database\Exception\InvalidQueryException;
+
 /**
- * @param string $query
- * @param array $params
- * @param bool $forceMasterConnection
- *
- * @return string
+ * @throws InvalidQueryException
+ * @throws FetchException
  */
-public function fetchValue($query, array $params = [], bool $forceMasterConnection = false) : string;
+public function fetchValue(string $query, array $params = [], bool $forceMasterConnection = false)
 
 $name = $db->fetchValue("SELECT `name` FROM `table` WHERE `id` = :id", ['id' => 1]);
 
@@ -232,14 +223,14 @@ string(6) "name 1"
 ```php
 <?php
 
- /**
- * @param string $query
- * @param array $params
- * @param bool $forceMasterConnection
- *
- * @return array
+use Linio\Component\Database\Exception\FetchException;
+use Linio\Component\Database\Exception\InvalidQueryException;
+
+/**
+ * @throws InvalidQueryException
+ * @throws FetchException
  */
-public function fetchKeyPairs($query, array $params = [], bool $forceMasterConnection = false) : array;
+public function fetchKeyPairs(string $query, array $params = [], bool $forceMasterConnection = false): array;
 
 $keyPairs = $db->fetchKeyPairs("SELECT `id`,`name` FROM `table` WHERE `id` > :id", ['id' => 1]);
 
@@ -261,15 +252,14 @@ array(2) {
 ```php
 <?php
 
+use Linio\Component\Database\Exception\FetchException;
+use Linio\Component\Database\Exception\InvalidQueryException;
+
 /**
- * @param string $query
- * @param array $params
- * @param int $columnIndex
- * @param bool $forceMasterConnection
- *
- * @return array
+ * @throws InvalidQueryException
+ * @throws FetchException
  */
-public function fetchColumn($query, array $params = [], $columnIndex = 0, bool $forceMasterConnection = false) : array;
+public function fetchColumn(string $query, array $params = [], int $columnIndex = 0, bool $forceMasterConnection = false): array;
 
 $names = $db->fetchColumn("SELECT `id`,`name` FROM `table` WHERE `id` > :id", ['id' => 1], 1);
 
@@ -292,15 +282,12 @@ array(2) {
 <?php
 
 use Linio\Component\Database\Entity\LazyFetch;
+use Linio\Component\Database\Exception\InvalidQueryException;
 
 /**
- * @param string $query
- * @param array $params
- * @param bool $forceMasterConnection
- *
- * @return LazyFetch
+ * @throws InvalidQueryException
  */
-public function fetchLazy($query, array $params = [], bool $forceMasterConnection = false) : LazyFetch;
+public function fetchLazy(string $query, array $params = [], bool $forceMasterConnection = false): LazyFetch;
 
 $lazyFetch = $db->fetchLazy("SELECT `id`,`name` FROM `table` WHERE `id` > ?", [1]);
 
@@ -317,13 +304,12 @@ In this example, when this `while` loop reached the end of the result set, the `
 ```php
 <?php
 
+use Linio\Component\Database\Exception\InvalidQueryException;
+
 /**
- * @param string $query
- * @param array $params
- *
- * @return int
+ * @throws InvalidQueryException
  */
-public function execute($query, array $params = []) : int;
+public function execute(string $query, array $params = []): int;
 
 $affectedRowsInsert = $db->execute("INSERT INTO `table` VALUES(:id, :name)", ['id' => 10, 'name' => 'test_name']);
 
@@ -349,12 +335,12 @@ int(3)
 ```php
 <?php
 
+use Linio\Component\Database\Exception\DatabaseException;
+
 /**
- * @param string $value
- *
- * @return string
+ * @throws DatabaseException
  */
-public function escapeValue($value) : string;
+public function escapeValue(string $value): string;
 
 $escapedValue = $db->escapeValue('Linio\'s Library');
 
@@ -372,12 +358,12 @@ string(17) "Linio\\'s Library"
 ```php
 <?php
 
+use Linio\Component\Database\Exception\DatabaseException;
+
 /**
- * @param string[] $values
- *
- * @return string[]
+ * @throws DatabaseException
  */
-public function escapeValues(array $values) : array;
+public function escapeValues(array $values): array;
 
 $escapedValues = $db->escapeValues(['Linio\'s Library', 'Linio\'s Library']);
 
@@ -414,11 +400,24 @@ Reasons:
 - Malformed SQL query
 - Wrong table or field names
 
-### `Linio\Component\Database\Exception\DatabaseException`
+### `Linio\Component\Database\Exception\FetchException`
 
 Reasons:
 
 - Lost connection to the database after creating the statement
+
+### `Linio\Component\Database\Exception\TransactionException`
+
+Reasons:
+
+- Failure to begin, commit or rollback a transaction
+
+### `Linio\Component\Database\Exception\DatabaseException`
+
+Reasons:
+
+- All exceptions extend from this
+- Non-specific errors
 
 ## Drivers
 

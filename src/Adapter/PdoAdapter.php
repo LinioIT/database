@@ -45,8 +45,8 @@ class PdoAdapter implements AdapterInterface
         $stmt = $this->executeStatement($query, $params);
         try {
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            throw new FetchException($e->getMessage(), $e->getCode(), $e);
+        } catch (PDOException $exception) {
+            throw new FetchException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
         return $rows;
@@ -61,8 +61,8 @@ class PdoAdapter implements AdapterInterface
         $stmt = $this->executeStatement($query, $params);
         try {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            throw new FetchException($e->getMessage(), $e->getCode(), $e);
+        } catch (PDOException $exception) {
+            throw new FetchException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
         if ($row === false) {
@@ -81,8 +81,8 @@ class PdoAdapter implements AdapterInterface
         $stmt = $this->executeStatement($query, $params);
         try {
             $values = $stmt->fetch(PDO::FETCH_NUM);
-        } catch (PDOException $e) {
-            throw new FetchException($e->getMessage(), $e->getCode(), $e);
+        } catch (PDOException $exception) {
+            throw new FetchException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
         if ($values === false) {
@@ -106,8 +106,8 @@ class PdoAdapter implements AdapterInterface
         $stmt = $this->executeStatement($query, $params);
         try {
             $keyPairs = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
-        } catch (PDOException $e) {
-            throw new FetchException($e->getMessage(), $e->getCode(), $e);
+        } catch (PDOException $exception) {
+            throw new FetchException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
         return $keyPairs;
@@ -122,8 +122,8 @@ class PdoAdapter implements AdapterInterface
         $stmt = $this->executeStatement($query, $params);
         try {
             $rows = $stmt->fetchAll(PDO::FETCH_COLUMN, $columnIndex);
-        } catch (PDOException $e) {
-            throw new FetchException($e->getMessage(), $e->getCode(), $e);
+        } catch (PDOException $exception) {
+            throw new FetchException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
         return $rows;
@@ -147,8 +147,8 @@ class PdoAdapter implements AdapterInterface
         if (empty($params)) {
             try {
                 return $this->pdo->exec($query);
-            } catch (PDOException $e) {
-                throw new InvalidQueryException($e->getMessage(), 0, $e);
+            } catch (PDOException $exception) {
+                throw new InvalidQueryException($exception->getMessage(), 0, $exception);
             }
         }
 
@@ -165,8 +165,8 @@ class PdoAdapter implements AdapterInterface
         try {
             $stmt = $this->pdo->prepare($query);
             $stmt->execute($params);
-        } catch (PDOException $e) {
-            throw new InvalidQueryException($e->getMessage(), 0, $e);
+        } catch (PDOException $exception) {
+            throw new InvalidQueryException($exception->getMessage(), 0, $exception);
         }
 
         return $stmt;
@@ -357,8 +357,8 @@ class PdoAdapter implements AdapterInterface
             } else {
                 $this->pdo = new PDO($dsn, null, null, $driverOptions);
             }
-        } catch (PDOException $e) {
-            throw new DatabaseConnectionException($e->getMessage(), $e->getCode(), $e);
+        } catch (PDOException $exception) {
+            throw new DatabaseConnectionException($exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 }
