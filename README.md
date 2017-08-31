@@ -79,21 +79,7 @@ $db = new DatabaseManager(false);
 ```php
 <?php
 
-    /**
-     * @param string $driver
-     * @param array $options
-     * @param string $role
-     * @param int $weight
-     *
-     * @return bool
-     */
-    public function addConnection($driver, array $options, $role = self::ROLE_MASTER, $weight = 1) : bool;
-
-	$masterDbOptions = ['host' => '127.0.0.1', 'port' => 3306, 'dbname' => 'master_db', 'username' => 'root','password' => ''];
-    $db->addConnection(DatabaseManager::DRIVER_MYSQL, $masterDbOptions, DatabaseManager::ROLE_MASTER);
-
-	$bigSlaveDbOptions = ['host' => '127.0.0.1', 'port' => 3306, 'dbname' => 'big_slave_db', 'username' => 'root','password' => ''];
-    $db->addConnection(DatabaseManager::DRIVER_MYSQL, $bigSlaveDbOptions, DatabaseManager::ROLE_SLAVE, 5);
+public function addConnection(string $driver, array $options, string $role = DatabaseManager::ROLE_MASTER, int $weight = 1): bool;
 
 $masterDbOptions = ['host' => '127.0.0.1', 'port' => 3306, 'dbname' => 'master_db', 'username' => 'root','password' => ''];
 $db->addConnection(DatabaseManager::DRIVER_MYSQL, $masterDbOptions, DatabaseManager::ROLE_MASTER);
@@ -143,13 +129,10 @@ array(2) {
 <?php
 
 /**
- * @param string $query
- * @param array $params
- * @param bool $forceMasterConnection
- *
- * @return array
+ * @throws InvalidQueryException
+ * @throws FetchException
  */
-public function fetchAll($query, array $params = [], bool $forceMasterConnection = false) : array;
+public function fetchAll(string $query, array $params = [], bool $forceMasterConnection = false): array;
 
 $rows = $db->fetchAll("SELECT `id`,`name` FROM `table` WHERE `id` > ?", [1]);
 
@@ -182,13 +165,10 @@ array(2) {
 <?php
 
 /**
- * @param string $query
- * @param array $params
- * @param bool $forceMasterConnection
- *
- * @return array
+ * @throws InvalidQueryException
+ * @throws FetchException
  */
-public function fetchOne($query, array $params = [], bool $forceMasterConnection = false) : array;
+public function fetchOne(string $query, array $params = [], bool $forceMasterConnection = false): array;
 
 $row = $db->fetchOne("SELECT `id`,`name` FROM `table` WHERE `id` = :id", ['id' => 1]);
 
@@ -212,13 +192,10 @@ array(2) {
 <?php
 
 /**
- * @param string $query
- * @param array $params
- * @param bool $forceMasterConnection
- *
- * @return string
+ * @throws InvalidQueryException
+ * @throws FetchException
  */
-public function fetchValue($query, array $params = [], bool $forceMasterConnection = false) : string;
+public function fetchValue(string $query, array $params = [], bool $forceMasterConnection = false)
 
 $name = $db->fetchValue("SELECT `name` FROM `table` WHERE `id` = :id", ['id' => 1]);
 
@@ -235,14 +212,11 @@ string(6) "name 1"
 ```php
 <?php
 
- /**
- * @param string $query
- * @param array $params
- * @param bool $forceMasterConnection
- *
- * @return array
+/**
+ * @throws InvalidQueryException
+ * @throws FetchException
  */
-public function fetchKeyPairs($query, array $params = [], bool $forceMasterConnection = false) : array;
+public function fetchKeyPairs(string $query, array $params = [], bool $forceMasterConnection = false): array;
 
 $keyPairs = $db->fetchKeyPairs("SELECT `id`,`name` FROM `table` WHERE `id` > :id", ['id' => 1]);
 
@@ -265,14 +239,10 @@ array(2) {
 <?php
 
 /**
- * @param string $query
- * @param array $params
- * @param int $columnIndex
- * @param bool $forceMasterConnection
- *
- * @return array
+ * @throws InvalidQueryException
+ * @throws FetchException
  */
-public function fetchColumn($query, array $params = [], $columnIndex = 0, bool $forceMasterConnection = false) : array;
+public function fetchColumn(string $query, array $params = [], int $columnIndex = 0, bool $forceMasterConnection = false): array;
 
 $names = $db->fetchColumn("SELECT `id`,`name` FROM `table` WHERE `id` > :id", ['id' => 1], 1);
 
@@ -295,15 +265,12 @@ array(2) {
 <?php
 
 use Linio\Component\Database\Entity\LazyFetch;
+use Linio\Component\Database\Exception\InvalidQueryException;
 
 /**
- * @param string $query
- * @param array $params
- * @param bool $forceMasterConnection
- *
- * @return LazyFetch
+ * @throws InvalidQueryException
  */
-public function fetchLazy($query, array $params = [], bool $forceMasterConnection = false) : LazyFetch;
+public function fetchLazy(string $query, array $params = [], bool $forceMasterConnection = false): LazyFetch;
 
 $lazyFetch = $db->fetchLazy("SELECT `id`,`name` FROM `table` WHERE `id` > ?", [1]);
 
@@ -321,12 +288,9 @@ In this example, when this `while` loop reached the end of the result set, the `
 <?php
 
 /**
- * @param string $query
- * @param array $params
- *
- * @return int
+ * @throws InvalidQueryException
  */
-public function execute($query, array $params = []) : int;
+public function execute(string $query, array $params = []): int;
 
 $affectedRowsInsert = $db->execute("INSERT INTO `table` VALUES(:id, :name)", ['id' => 10, 'name' => 'test_name']);
 
@@ -353,11 +317,9 @@ int(3)
 <?php
 
 /**
- * @param string $value
- *
- * @return string
+ * @throws DatabaseException
  */
-public function escapeValue($value) : string;
+public function escapeValue(string $value): string;
 
 $escapedValue = $db->escapeValue('Linio\'s Library');
 
@@ -376,11 +338,9 @@ string(17) "Linio\\'s Library"
 <?php
 
 /**
- * @param string[] $values
- *
- * @return string[]
+ * @throws DatabaseException
  */
-public function escapeValues(array $values) : array;
+public function escapeValues(array $values): array;
 
 $escapedValues = $db->escapeValues(['Linio\'s Library', 'Linio\'s Library']);
 
