@@ -163,8 +163,6 @@ class DatabaseManagerTest extends TestCase
 
     public function testIsCreatingAndRollingBackTransactionUsingExecuteTransaction(): void
     {
-        $this->expectException(DatabaseException::class);
-
         $db = new DatabaseManager();
         $connectionOptions = [
             'host' => TEST_DATABASE_HOST,
@@ -176,7 +174,9 @@ class DatabaseManagerTest extends TestCase
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_SLAVE);
 
-        $db->execute('CREATE TABLE testing_rollback (id int(11))');
+        $db->execute('CREATE TEMPORARY TABLE testing_rollback (id int(11))');
+
+        $this->expectException(DatabaseException::class);
 
         $callable = function (DatabaseManager $databaseManager): void {
             $databaseManager->execute('INSERT INTO testing_rollback VALUES (1)');
