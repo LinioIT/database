@@ -137,11 +137,11 @@ class DatabaseManagerTest extends TestCase
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_SLAVE);
 
-        $callable = function () {
-            return true;
+        $callable = function (DatabaseManager $databaseManager): string {
+            return $databaseManager->fetchValue('SELECT 1');
         };
 
-        $this->assertTrue($db->executeTransaction($callable));
+        $this->assertEquals('1', $db->executeTransaction($callable));
     }
 
     public function testIsCreatingAndRollingBackTransaction(): void
@@ -176,11 +176,16 @@ class DatabaseManagerTest extends TestCase
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_SLAVE);
 
-        $callable = function (): void {
-            throw new DatabaseException();
+        $db->execute('CREATE TABLE testing_rollback (id int(11))');
+
+        $callable = function (DatabaseManager $databaseManager): void {
+            $databaseManager->execute('INSERT INTO testing_rollback VALUES (1)');
+            $databaseManager->execute('WRONG SQL');
         };
 
         $db->executeTransaction($callable);
+
+        $this->assertEmpty($db->fetchValue('SELECT id FROM testing_rollback'));
     }
 
     public function testIsNotCreatingNestedTransactions(): void
