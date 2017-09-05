@@ -6,6 +6,7 @@ namespace Linio\Component\Database;
 
 use Linio\Component\Database\Entity\Connection;
 use Linio\Component\Database\Exception\DatabaseConnectionException;
+use Linio\Component\Database\Exception\DatabaseException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -123,6 +124,26 @@ class DatabaseManagerTest extends TestCase
         $this->assertTrue($db->commit());
     }
 
+    public function testIsCreatingAndCommitingTransactionUsingExecuteTransaction(): void
+    {
+        $db = new DatabaseManager();
+        $connectionOptions = [
+            'host' => TEST_DATABASE_HOST,
+            'port' => TEST_DATABASE_PORT,
+            'dbname' => TEST_DATABASE_DBNAME,
+            'username' => TEST_DATABASE_USERNAME,
+            'password' => TEST_DATABASE_PASSWORD,
+        ];
+        $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
+        $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_SLAVE);
+
+        $callable = function () {
+            return true;
+        };
+
+        $this->assertTrue($db->executeTransaction($callable));
+    }
+
     public function testIsCreatingAndRollingBackTransaction(): void
     {
         $db = new DatabaseManager();
@@ -138,6 +159,28 @@ class DatabaseManagerTest extends TestCase
 
         $this->assertTrue($db->beginTransaction());
         $this->assertTrue($db->rollBack());
+    }
+
+    public function testIsCreatingAndRollingBackTransactionUsingExecuteTransaction(): void
+    {
+        $this->expectException(DatabaseException::class);
+
+        $db = new DatabaseManager();
+        $connectionOptions = [
+            'host' => TEST_DATABASE_HOST,
+            'port' => TEST_DATABASE_PORT,
+            'dbname' => TEST_DATABASE_DBNAME,
+            'username' => TEST_DATABASE_USERNAME,
+            'password' => TEST_DATABASE_PASSWORD,
+        ];
+        $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
+        $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_SLAVE);
+
+        $callable = function (): void {
+            throw new DatabaseException();
+        };
+
+        $db->executeTransaction($callable);
     }
 
     public function testIsNotCreatingNestedTransactions(): void

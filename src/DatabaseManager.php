@@ -206,6 +206,24 @@ class DatabaseManager
     }
 
     /**
+     * @throws DatabaseException
+     */
+    public function executeTransaction(callable $transaction)
+    {
+        try {
+            $this->beginTransaction();
+            $result = $transaction($this);
+            $this->commit();
+
+            return $result;
+        } catch (DatabaseException $exception) {
+            $this->rollBack();
+
+            throw $exception;
+        }
+    }
+
+    /**
      * @throws TransactionException
      */
     public function beginTransaction(): bool
