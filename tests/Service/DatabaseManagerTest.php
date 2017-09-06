@@ -6,6 +6,7 @@ namespace Linio\Component\Database;
 
 use Linio\Component\Database\Entity\Connection;
 use Linio\Component\Database\Exception\DatabaseConnectionException;
+use Linio\Component\Database\Exception\TransactionException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -123,6 +124,26 @@ class DatabaseManagerTest extends TestCase
         $this->assertTrue($db->commit());
     }
 
+    public function testIsCreatingAndCommittingTransactionUsingExecuteTransaction(): void
+    {
+        $db = new DatabaseManager();
+        $connectionOptions = [
+            'host' => TEST_DATABASE_HOST,
+            'port' => TEST_DATABASE_PORT,
+            'dbname' => TEST_DATABASE_DBNAME,
+            'username' => TEST_DATABASE_USERNAME,
+            'password' => TEST_DATABASE_PASSWORD,
+        ];
+        $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
+        $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_SLAVE);
+
+        $callable = function (DatabaseManager $databaseManager): string {
+            return $databaseManager->fetchValue('SELECT 1');
+        };
+
+        $this->assertEquals('1', $db->executeTransaction($callable));
+    }
+
     public function testIsCreatingAndRollingBackTransaction(): void
     {
         $db = new DatabaseManager();
@@ -138,6 +159,33 @@ class DatabaseManagerTest extends TestCase
 
         $this->assertTrue($db->beginTransaction());
         $this->assertTrue($db->rollBack());
+    }
+
+    public function testIsCreatingAndRollingBackTransactionUsingExecuteTransaction(): void
+    {
+        $db = new DatabaseManager();
+        $connectionOptions = [
+            'host' => TEST_DATABASE_HOST,
+            'port' => TEST_DATABASE_PORT,
+            'dbname' => TEST_DATABASE_DBNAME,
+            'username' => TEST_DATABASE_USERNAME,
+            'password' => TEST_DATABASE_PASSWORD,
+        ];
+        $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
+        $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_SLAVE);
+
+        $db->execute('CREATE TEMPORARY TABLE testing_rollback (id int(11))');
+
+        $this->expectException(TransactionException::class);
+
+        $callable = function (DatabaseManager $databaseManager): void {
+            $databaseManager->execute('INSERT INTO testing_rollback VALUES (1)');
+            $databaseManager->execute('WRONG SQL');
+        };
+
+        $db->executeTransaction($callable);
+
+        $this->assertEmpty($db->fetchValue('SELECT id FROM testing_rollback'));
     }
 
     public function testIsNotCreatingNestedTransactions(): void
