@@ -6,7 +6,7 @@ namespace Linio\Component\Database;
 
 use Linio\Component\Database\Entity\Connection;
 use Linio\Component\Database\Exception\DatabaseConnectionException;
-use Linio\Component\Database\Exception\DatabaseException;
+use Linio\Component\Database\Exception\TransactionException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -124,7 +124,7 @@ class DatabaseManagerTest extends TestCase
         $this->assertTrue($db->commit());
     }
 
-    public function testIsCreatingAndCommitingTransactionUsingExecuteTransaction(): void
+    public function testIsCreatingAndCommittingTransactionUsingExecuteTransaction(): void
     {
         $db = new DatabaseManager();
         $connectionOptions = [
@@ -176,7 +176,7 @@ class DatabaseManagerTest extends TestCase
 
         $db->execute('CREATE TEMPORARY TABLE testing_rollback (id int(11))');
 
-        $this->expectException(DatabaseException::class);
+        $this->expectException(TransactionException::class);
 
         $callable = function (DatabaseManager $databaseManager): void {
             $databaseManager->execute('INSERT INTO testing_rollback VALUES (1)');

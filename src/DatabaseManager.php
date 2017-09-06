@@ -219,7 +219,7 @@ class DatabaseManager
         } catch (DatabaseException $exception) {
             $this->rollBack();
 
-            throw $exception;
+            throw new TransactionException($exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 
