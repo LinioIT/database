@@ -54,21 +54,20 @@ class PdoAdapterTest extends TestCase
         $this->assertInstanceOf(PdoAdapter::class, $this->adapter);
     }
 
-    public function testIsPdoObjectLazilyInstantiated()
+    public function testIsPdoObjectLazilyInstantiated(): void
     {
         $testAdapter = new PdoAdapter(DatabaseManager::DRIVER_MYSQL, $this->driverOptions, DatabaseManager::ROLE_MASTER);
 
-        $adapterPdo = PHPUnit_Framework_Assert::readAttribute($testAdapter, 'pdo');
+        $adapterPdo = Assert::readAttribute($testAdapter, 'pdo');
         $this->assertNull($adapterPdo);
 
         $testAdapter->execute('SELECT 1');
 
-        /* @var $adapterPdo \PDO */
-        $adapterPdo = PHPUnit_Framework_Assert::readAttribute($testAdapter, 'pdo');
-        $this->assertInstanceOf(\PDO::class, $adapterPdo);
+        // @var $adapterPdo PDO
+        $adapterPdo = Assert::readAttribute($testAdapter, 'pdo');
+        $this->assertInstanceOf(PDO::class, $adapterPdo);
     }
 
-    public function testIsSettingPdoDefaultErrorModeAttributeToException()
     public function testIsSettingPdoDefaultErrorModeAttributeToException(): void
     {
         $testAdapter = new PdoAdapter(DatabaseManager::DRIVER_MYSQL, $this->driverOptions, DatabaseManager::ROLE_MASTER);
