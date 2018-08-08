@@ -28,12 +28,17 @@ class PdoAdapter implements AdapterInterface
     protected $driver;
 
     /**
+     * @var array
+     */
+    protected $options;
+
+    /**
      * @throws DatabaseConnectionException
      */
     public function __construct(string $driver, array $options, string $role)
     {
         $this->driver = $driver;
-        $this->setPdo($driver, $options);
+        $this->options = $options;
     }
 
     /**
@@ -146,7 +151,7 @@ class PdoAdapter implements AdapterInterface
     {
         if (empty($params)) {
             try {
-                return $this->pdo->exec($query);
+                return $this->getPdo()->exec($query);
             } catch (PDOException $exception) {
                 throw new InvalidQueryException($exception->getMessage(), 0, $exception);
             }
@@ -163,7 +168,7 @@ class PdoAdapter implements AdapterInterface
     protected function executeStatement(string $query, array $params): PDOStatement
     {
         try {
-            $stmt = $this->pdo->prepare($query);
+            $stmt = $this->getPdo()->prepare($query);
             $stmt->execute($params);
         } catch (PDOException $exception) {
             throw new InvalidQueryException($exception->getMessage(), 0, $exception);
@@ -178,7 +183,7 @@ class PdoAdapter implements AdapterInterface
     public function beginTransaction(): void
     {
         try {
-            $this->pdo->beginTransaction();
+            $this->getPdo()->beginTransaction();
         } catch (PDOException $exception) {
             throw new TransactionException($exception->getMessage(), $exception->getCode(), $exception);
         }
@@ -190,7 +195,7 @@ class PdoAdapter implements AdapterInterface
     public function commit(): void
     {
         try {
-            $this->pdo->commit();
+            $this->getPdo()->commit();
         } catch (PDOException $exception) {
             throw new TransactionException($exception->getMessage(), $exception->getCode(), $exception);
         }
@@ -202,7 +207,7 @@ class PdoAdapter implements AdapterInterface
     public function rollBack(): void
     {
         try {
-            $this->pdo->rollBack();
+            $this->getPdo()->rollBack();
         } catch (PDOException $exception) {
             throw new TransactionException($exception->getMessage(), $exception->getCode(), $exception);
         }
@@ -214,7 +219,7 @@ class PdoAdapter implements AdapterInterface
     public function getLastInsertId(string $name = null): string
     {
         try {
-            return $this->pdo->lastInsertId($name);
+            return $this->getPdo()->lastInsertId($name);
         } catch (PDOException $exception) {
             throw new DatabaseException($exception->getMessage(), $exception->getCode(), $exception);
         }
@@ -231,6 +236,15 @@ class PdoAdapter implements AdapterInterface
             default:
                 throw new DatabaseException('Method not yet implemented for this database');
         }
+    }
+
+    protected function getPdo(): \PDO
+    {
+        if (!$this->pdo) {
+            $this->setPdo($this->driver, $this->options);
+        }
+
+        return $this->pdo;
     }
 
     /**
