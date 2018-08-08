@@ -63,7 +63,7 @@ class PdoAdapterTest extends TestCase
 
         $testAdapter->execute('SELECT 1');
 
-        // @var $adapterPdo PDO
+        /** @var PDO $adapterPdo */
         $adapterPdo = Assert::readAttribute($testAdapter, 'pdo');
         $this->assertInstanceOf(PDO::class, $adapterPdo);
     }

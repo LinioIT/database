@@ -238,7 +238,7 @@ class PdoAdapter implements AdapterInterface
         }
     }
 
-    protected function getPdo(): \PDO
+    protected function getPdo(): PDO
     {
         if (!$this->pdo) {
             $this->setPdo($this->driver, $this->options);
