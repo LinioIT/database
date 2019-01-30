@@ -27,8 +27,6 @@ class NamedArrayParameter implements Transformer
                 continue;
             }
 
-            $hasDoubleColon = ($paramKey[0] === ':');
-
             if (is_array($paramValue)) {
                 $placeholders = $builder->placeholders($paramKey, $paramValue);
                 $params += $placeholders;
@@ -36,6 +34,8 @@ class NamedArrayParameter implements Transformer
                 unset($params[$paramKey]);
 
                 $paramNames = array_keys($placeholders);
+
+                $hasDoubleColon = ($paramKey[0] === ':');
 
                 $paramNameToReplace = $hasDoubleColon ? $paramKey : ':' . $paramKey;
 
