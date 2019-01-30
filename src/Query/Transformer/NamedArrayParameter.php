@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Linio\Component\Database\Query\Transformer;
 
+use Linio\Component\Database\Exception\InvalidQueryException;
 use Linio\Component\Database\Query\Builder;
 use Linio\Component\Database\Query\Transformer;
 
@@ -15,6 +16,14 @@ class NamedArrayParameter implements Transformer
 
         foreach ($params as $paramKey => $paramValue) {
             if (is_numeric($paramKey)) {
+                if (is_array($paramValue)) {
+                    throw new InvalidQueryException(sprintf(
+                        'Unnamed parameter "%s" can\'t have array value: %s',
+                        $paramKey,
+                        var_export($paramValue, true)
+                    ));
+                }
+
                 continue;
             }
 

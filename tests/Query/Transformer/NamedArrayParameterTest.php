@@ -4,10 +4,29 @@ declare(strict_types=1);
 
 namespace Linio\Component\Database\Query\Transformer;
 
+use Linio\Component\Database\Exception\InvalidQueryException;
 use PHPUnit\Framework\TestCase;
 
 class NamedArrayParameterTest extends TestCase
 {
+    public function testItRejectNotNamedParamWithArrayValue(): void
+    {
+        $query = 'SELECT id, email FROM users WHERE uuid in (?)';
+
+        $params = [
+            [
+                'abc-13',
+                'def-456',
+            ],
+        ];
+
+        $transformer = new NamedArrayParameter();
+
+        $this->expectException(InvalidQueryException::class);
+
+        $transformer->execute($query, $params);
+    }
+
     public function testItDoesTransformQueryWithOneArrayParameterUsingDoubleQuotes(): void
     {
         $query = 'SELECT id, email FROM users WHERE uuid in (:uuid)';
