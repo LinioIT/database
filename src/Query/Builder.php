@@ -17,7 +17,7 @@ class Builder
 
             if (!is_array($paramValues)) {
                 $paramValues = [
-                    $paramValues
+                    $paramValues,
                 ];
             }
 

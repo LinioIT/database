@@ -15,7 +15,7 @@ class NamedArrayParameterTest extends TestCase
         $params = [
             ':uuid' => [
                 'abc-13',
-                'def-456'
+                'def-456',
             ],
         ];
 
@@ -40,7 +40,7 @@ class NamedArrayParameterTest extends TestCase
         $params = [
             'uuid' => [
                 'abc-13',
-                'def-456'
+                'def-456',
             ],
         ];
 
@@ -65,12 +65,12 @@ class NamedArrayParameterTest extends TestCase
         $params = [
             ':uuid' => [
                 'abc-13',
-                'def-456'
+                'def-456',
             ],
             ':status' => [
                 1,
                 5,
-                6
+                6,
             ],
         ];
 
@@ -98,12 +98,12 @@ class NamedArrayParameterTest extends TestCase
         $params = [
             'uuid' => [
                 'abc-13',
-                'def-456'
+                'def-456',
             ],
             'status' => [
                 1,
                 5,
-                6
+                6,
             ],
         ];
 
