@@ -10,10 +10,18 @@ use Linio\Component\Database\Query\Transformer;
 
 class NamedArrayParameter implements Transformer
 {
+    /**
+     * @var Builder
+     */
+    protected $builder;
+
+    public function __construct(Builder $builder)
+    {
+        $this->builder = $builder;
+    }
+
     public function execute(string &$query, array &$params = []): void
     {
-        $builder = new Builder();
-
         foreach ($params as $paramKey => $paramValue) {
             if (is_numeric($paramKey)) {
                 if (is_array($paramValue)) {
@@ -28,7 +36,7 @@ class NamedArrayParameter implements Transformer
             }
 
             if (is_array($paramValue)) {
-                $placeholders = $builder->placeholders($paramKey, $paramValue);
+                $placeholders = $this->builder->placeholders($paramKey, $paramValue);
                 $params += $placeholders;
 
                 unset($params[$paramKey]);

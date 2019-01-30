@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Linio\Component\Database\Query\Transformer;
 
 use Linio\Component\Database\Exception\InvalidQueryException;
+use Linio\Component\Database\Query\Builder;
 use PHPUnit\Framework\TestCase;
 
 class NamedArrayParameterTest extends TestCase
@@ -20,7 +21,7 @@ class NamedArrayParameterTest extends TestCase
             ],
         ];
 
-        $transformer = new NamedArrayParameter();
+        $transformer = new NamedArrayParameter(new Builder());
 
         $this->expectException(InvalidQueryException::class);
 
@@ -45,7 +46,7 @@ class NamedArrayParameterTest extends TestCase
             ':uuid_1' => 'def-456',
         ];
 
-        $transformer = new NamedArrayParameter();
+        $transformer = new NamedArrayParameter(new Builder());
         $transformer->execute($query, $params);
 
         $this->assertEquals($expectedQuery, $query);
@@ -70,7 +71,7 @@ class NamedArrayParameterTest extends TestCase
             ':uuid_1' => 'def-456',
         ];
 
-        $transformer = new NamedArrayParameter();
+        $transformer = new NamedArrayParameter(new Builder());
         $transformer->execute($query, $params);
 
         $this->assertEquals($expectedQuery, $query);
@@ -103,7 +104,7 @@ class NamedArrayParameterTest extends TestCase
             ':status_2' => 6,
         ];
 
-        $transformer = new NamedArrayParameter();
+        $transformer = new NamedArrayParameter(new Builder());
         $transformer->execute($query, $params);
 
         $this->assertEquals($expectedQuery, $query);
@@ -136,7 +137,7 @@ class NamedArrayParameterTest extends TestCase
             ':status_2' => 6,
         ];
 
-        $transformer = new NamedArrayParameter();
+        $transformer = new NamedArrayParameter(new Builder());
         $transformer->execute($query, $params);
 
         $this->assertEquals($expectedQuery, $query);
