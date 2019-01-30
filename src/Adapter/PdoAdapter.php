@@ -11,6 +11,9 @@ use Linio\Component\Database\Exception\DatabaseException;
 use Linio\Component\Database\Exception\FetchException;
 use Linio\Component\Database\Exception\InvalidQueryException;
 use Linio\Component\Database\Exception\TransactionException;
+use Linio\Component\Database\Query\Builder;
+use Linio\Component\Database\Query\Transformer;
+use Linio\Component\Database\Query\Transformer\NamedArrayParameter;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -33,12 +36,30 @@ class PdoAdapter implements AdapterInterface
     protected $options;
 
     /**
+     * @var Builder
+     */
+    protected $builder;
+
+    /**
+     * @var Transformer[]
+     */
+    protected $transformers = [];
+
+    /**
      * @throws DatabaseConnectionException
      */
     public function __construct(string $driver, array $options, string $role)
     {
         $this->driver = $driver;
         $this->options = $options;
+        $this->builder = new Builder();
+    }
+
+    public function supportNamedParameterWithArrayValue(): void
+    {
+        if (!isset($this->transformers[NamedArrayParameter::class])) {
+            $this->transformers[NamedArrayParameter::class] = new NamedArrayParameter($this->builder);
+        }
     }
 
     /**
@@ -168,6 +189,10 @@ class PdoAdapter implements AdapterInterface
     protected function executeStatement(string $query, array $params): PDOStatement
     {
         try {
+            foreach ($this->transformers as $transformer) {
+                $transformer->execute($query, $params);
+            }
+
             $stmt = $this->getPdo()->prepare($query);
             $stmt->execute($params);
         } catch (PDOException $exception) {
