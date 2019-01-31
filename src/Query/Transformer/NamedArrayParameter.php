@@ -26,13 +26,13 @@ class NamedArrayParameter implements Transformer
 
             unset($params[$paramKey]);
 
-            $paramNames = array_keys($valuesIndexesByPlaceholder);
+            $arrayParamKeys = array_keys($valuesIndexesByPlaceholder);
 
             $startsWithColon = $paramKey[0] === ':';
 
             $paramNameToReplace = $startsWithColon ? $paramKey : ':' . $paramKey;
 
-            $query = str_replace($paramNameToReplace, implode(', ', $paramNames), $query);
+            $query = str_replace($paramNameToReplace, implode(', ', $arrayParamKeys), $query);
         }
     }
 
