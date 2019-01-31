@@ -49,7 +49,7 @@ class PdoAdapter implements AdapterInterface
         $this->driver = $driver;
         $this->options = $options;
 
-        if ($this->options[static::ENABLE_NAMED_ARRAY_VALUES] === true) {
+        if (!empty($this->options[static::ENABLE_NAMED_ARRAY_VALUES])) {
             $this->enableNamedArrayValues();
         }
     }
