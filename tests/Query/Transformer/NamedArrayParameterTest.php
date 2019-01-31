@@ -27,7 +27,7 @@ class NamedArrayParameterTest extends TestCase
         $transformer->execute($query, $params);
     }
 
-    public function testItDoesTransformQueryWithOneArrayParameterUsingDoubleColon(): void
+    public function testItDoesTransformQueryWithOneArrayParameterUsingColonPrefix(): void
     {
         $query = 'SELECT id, email FROM users WHERE uuid in (:uuid)';
 
@@ -52,7 +52,7 @@ class NamedArrayParameterTest extends TestCase
         $this->assertEquals($expectedParams, $params);
     }
 
-    public function testItDoesTransformQueryWithOneArrayParameterNotUsingDoubleColon(): void
+    public function testItDoesTransformQueryWithOneArrayParameterNotUsingColonPrefix(): void
     {
         $query = 'SELECT id, email FROM users WHERE uuid in (:uuid)';
 
@@ -77,7 +77,7 @@ class NamedArrayParameterTest extends TestCase
         $this->assertEquals($expectedParams, $params);
     }
 
-    public function testItDoesTransformQueryWithTwoArrayParametersUsingDoubleColon(): void
+    public function testItDoesTransformQueryWithTwoArrayParametersUsingColonPrefix(): void
     {
         $query = 'SELECT id, email FROM users WHERE uuid in (:uuid) and status IN (:status)';
 
@@ -110,7 +110,7 @@ class NamedArrayParameterTest extends TestCase
         $this->assertEquals($expectedParams, $params);
     }
 
-    public function testItDoesTransformQueryWithTwoArrayParametersNotUsingDoubleColon(): void
+    public function testItDoesTransformQueryWithTwoArrayParametersNotUsingColonPrefix(): void
     {
         $query = 'SELECT id, email FROM users WHERE uuid in (:uuid) and status IN (:status)';
 
