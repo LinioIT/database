@@ -30,9 +30,9 @@ class NamedArrayParameter implements Transformer
 
             $paramNames = array_keys($placeholders);
 
-            $hasDoubleColon = $paramKey[0] === ':';
+            $startsWithColon = $paramKey[0] === ':';
 
-            $paramNameToReplace = $hasDoubleColon ? $paramKey : ':' . $paramKey;
+            $paramNameToReplace = $startsWithColon ? $paramKey : ':' . $paramKey;
 
             $query = str_replace($paramNameToReplace, implode(', ', $paramNames), $query);
         }
