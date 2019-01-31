@@ -23,7 +23,7 @@ class NamedArrayParameter implements Transformer
                 continue;
             }
 
-            $placeholders = $this->placeholders($paramKey, $paramValue);
+            $placeholders = $this->explodeArrayParameter($paramKey, $paramValue);
             $params += $placeholders;
 
             unset($params[$paramKey]);
@@ -38,7 +38,7 @@ class NamedArrayParameter implements Transformer
         }
     }
 
-    protected function placeholders(string $paramName, array $values): array
+    protected function explodeArrayParameter(string $paramName, array $values): array
     {
         $placeholders = [];
 
