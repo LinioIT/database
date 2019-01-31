@@ -12,15 +12,12 @@ class NamedArrayParameter implements Transformer
     public function execute(string &$query, array &$params = []): void
     {
         foreach ($params as $paramKey => $paramValue) {
-            $isKeyNumeric = is_numeric($paramKey);
-            $isValueArray = is_array($paramValue);
-
-            if ($isKeyNumeric && $isValueArray) {
-                throw new InvalidQueryException(sprintf('Unnamed parameter "%s" can\'t have array value.', $paramKey));
+            if (!is_array($paramValue)) {
+                continue;
             }
 
-            if ($isKeyNumeric || !$isValueArray) {
-                continue;
+            if (is_numeric($paramKey)) {
+                throw new InvalidQueryException(sprintf('Unnamed parameter "%s" can\'t have array value.', $paramKey));
             }
 
             $placeholders = $this->explodeArrayParameter($paramKey, $paramValue);
