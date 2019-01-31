@@ -187,7 +187,7 @@ class PdoAdapterTest extends TestCase
 
     public function testIsFetchingValueWithNamedArrayParamUsingDoubleColon(): void
     {
-        $this->adapter->supportNamedParameterWithArrayValue();
+        $this->adapter->enableArrayValues();
 
         $actual = $this->adapter->fetchAll('SELECT `dept_name` FROM `departments` WHERE `dept_no` IN (:dept_no) ORDER BY dept_no', [
             'dept_no' => [

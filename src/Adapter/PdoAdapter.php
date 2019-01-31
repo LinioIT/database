@@ -48,7 +48,7 @@ class PdoAdapter implements AdapterInterface
         $this->options = $options;
     }
 
-    public function supportNamedParameterWithArrayValue(): void
+    public function enableArrayValues(): void
     {
         if (!isset($this->transformers[NamedArrayParameter::class])) {
             $this->transformers[NamedArrayParameter::class] = new NamedArrayParameter();
