@@ -26,6 +26,7 @@ run PHPUnit.
 <?php
 
 use Linio\Component\Database\DatabaseManager;
+use Linio\Component\Database\Adapter\PdoAdapter;
 
 $container['db'] = function() {
     $db = new DatabaseManager();
@@ -39,6 +40,8 @@ $container['db'] = function() {
             \PDO::ATTR_PERSISTENT => true,
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
         ],
+        // optional, this is necessary to support placeholders with named array values.
+        PdoAdapter::ENABLE_ARRAY_VALUES => true,
     ];
     $db->addConnection(DatabaseManager::DRIVER_MYSQL, $driverOptions);
 

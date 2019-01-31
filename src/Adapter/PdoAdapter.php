@@ -19,6 +19,8 @@ use PDOStatement;
 
 class PdoAdapter implements AdapterInterface
 {
+    const ENABLE_ARRAY_VALUES = 'ENABLE_ARRAY_VALUES';
+
     /**
      * @var PDO
      */
@@ -46,6 +48,10 @@ class PdoAdapter implements AdapterInterface
     {
         $this->driver = $driver;
         $this->options = $options;
+
+        if ($this->options[static::ENABLE_ARRAY_VALUES] === true) {
+            $this->enableArrayValues();
+        }
     }
 
     public function enableArrayValues(): void

@@ -44,8 +44,11 @@ class PdoAdapterTest extends TestCase
             'dbname' => TEST_DATABASE_DBNAME,
             'username' => TEST_DATABASE_USERNAME,
             'password' => TEST_DATABASE_PASSWORD,
+            PdoAdapter::ENABLE_ARRAY_VALUES => true,
         ];
+
         $this->createDatabaseFixture();
+
         $this->adapter = new PdoAdapter(DatabaseManager::DRIVER_MYSQL, $this->driverOptions, DatabaseManager::ROLE_MASTER);
     }
 
@@ -187,8 +190,6 @@ class PdoAdapterTest extends TestCase
 
     public function testIsFetchingValueWithNamedArrayParamUsingDoubleColon(): void
     {
-        $this->adapter->enableArrayValues();
-
         $actual = $this->adapter->fetchAll('SELECT `dept_name` FROM `departments` WHERE `dept_no` IN (:dept_no) ORDER BY dept_no', [
             'dept_no' => [
                 'd001', // Marketing
