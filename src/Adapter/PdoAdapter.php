@@ -19,7 +19,7 @@ use PDOStatement;
 
 class PdoAdapter implements AdapterInterface
 {
-    const ENABLE_ARRAY_VALUES = 'ENABLE_ARRAY_VALUES';
+    const ENABLE_NAMED_ARRAY_VALUES = 'ENABLE_NAMED_ARRAY_VALUES';
 
     /**
      * @var PDO
@@ -49,12 +49,12 @@ class PdoAdapter implements AdapterInterface
         $this->driver = $driver;
         $this->options = $options;
 
-        if ($this->options[static::ENABLE_ARRAY_VALUES] === true) {
-            $this->enableArrayValues();
+        if ($this->options[static::ENABLE_NAMED_ARRAY_VALUES] === true) {
+            $this->enableNamedArrayValues();
         }
     }
 
-    public function enableArrayValues(): void
+    public function enableNamedArrayValues(): void
     {
         if (!isset($this->transformers[NamedArrayParameter::class])) {
             $this->transformers[NamedArrayParameter::class] = new NamedArrayParameter();

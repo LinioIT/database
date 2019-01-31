@@ -41,7 +41,7 @@ $container['db'] = function() {
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
         ],
         // optional, this is necessary to support placeholders with named array values.
-        PdoAdapter::ENABLE_ARRAY_VALUES => true,
+        PdoAdapter::ENABLE_NAMED_ARRAY_VALUES => true,
     ];
     $db->addConnection(DatabaseManager::DRIVER_MYSQL, $driverOptions);
 

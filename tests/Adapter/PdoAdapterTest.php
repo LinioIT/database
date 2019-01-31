@@ -44,7 +44,7 @@ class PdoAdapterTest extends TestCase
             'dbname' => TEST_DATABASE_DBNAME,
             'username' => TEST_DATABASE_USERNAME,
             'password' => TEST_DATABASE_PASSWORD,
-            PdoAdapter::ENABLE_ARRAY_VALUES => true,
+            PdoAdapter::ENABLE_NAMED_ARRAY_VALUES => true,
         ];
 
         $this->createDatabaseFixture();
