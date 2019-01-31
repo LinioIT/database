@@ -13,13 +13,13 @@ class NamedArrayParameter implements Transformer
     {
         foreach ($params as $paramKey => $paramValue) {
             $isKeyNumeric = is_numeric($paramKey);
-            $isArray = is_array($paramValue);
+            $isValueArray = is_array($paramValue);
 
-            if ($isKeyNumeric && $isArray) {
+            if ($isKeyNumeric && $isValueArray) {
                 throw new InvalidQueryException(sprintf('Unnamed parameter "%s" can\'t have array value.', $paramKey));
             }
 
-            if ($isKeyNumeric || !$isArray) {
+            if ($isKeyNumeric || !$isValueArray) {
                 continue;
             }
 
