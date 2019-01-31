@@ -16,11 +16,7 @@ class NamedArrayParameter implements Transformer
             $isArray = is_array($paramValue);
 
             if ($isNumeric && $isArray) {
-                throw new InvalidQueryException(sprintf(
-                    'Unnamed parameter "%s" can\'t have array value: %s',
-                    $paramKey,
-                    var_export($paramValue, true)
-                ));
+                throw new InvalidQueryException(sprintf('Unnamed parameter "%s" can\'t have array value.', $paramKey));
             }
 
             if ($isNumeric || !$isArray) {
