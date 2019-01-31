@@ -38,15 +38,15 @@ class NamedArrayParameter implements Transformer
         }
     }
 
-    protected function explodeArrayParameter(string $paramName, array $values): array
+    protected function explodeArrayParameter(string $paramName, array $paramValues): array
     {
         $placeholders = [];
 
         $counter = 0;
 
-        foreach ($values as $value) {
-            $name = sprintf(':%s_%d', ltrim($paramName, ':'), $counter++);
-            $placeholders[$name] = $value;
+        foreach ($paramValues as $value) {
+            $placeholderName = sprintf(':%s_%d', ltrim($paramName, ':'), $counter++);
+            $placeholders[$placeholderName] = $value;
         }
 
         return $placeholders;
