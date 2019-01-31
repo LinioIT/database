@@ -5,21 +5,10 @@ declare(strict_types=1);
 namespace Linio\Component\Database\Query\Transformer;
 
 use Linio\Component\Database\Exception\InvalidQueryException;
-use Linio\Component\Database\Query\Builder;
 use Linio\Component\Database\Query\Transformer;
 
 class NamedArrayParameter implements Transformer
 {
-    /**
-     * @var Builder
-     */
-    protected $builder;
-
-    public function __construct(Builder $builder)
-    {
-        $this->builder = $builder;
-    }
-
     public function execute(string &$query, array &$params = []): void
     {
         foreach ($params as $paramKey => $paramValue) {
@@ -36,7 +25,7 @@ class NamedArrayParameter implements Transformer
             }
 
             if (is_array($paramValue)) {
-                $placeholders = $this->builder->placeholders($paramKey, $paramValue);
+                $placeholders = $this->placeholders($paramKey, $paramValue);
                 $params += $placeholders;
 
                 unset($params[$paramKey]);
@@ -50,5 +39,17 @@ class NamedArrayParameter implements Transformer
                 $query = str_replace($paramNameToReplace, implode(', ', $paramNames), $query);
             }
         }
+    }
+
+    protected function placeholders(string $paramName, array $values): array
+    {
+        $placeholders = [];
+
+        foreach ($values as $v => $value) {
+            $name = sprintf(':%s_%d', ltrim($paramName, ':'), $v);
+            $placeholders[$name] = $value;
+        }
+
+        return $placeholders;
     }
 }

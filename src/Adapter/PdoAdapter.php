@@ -11,7 +11,6 @@ use Linio\Component\Database\Exception\DatabaseException;
 use Linio\Component\Database\Exception\FetchException;
 use Linio\Component\Database\Exception\InvalidQueryException;
 use Linio\Component\Database\Exception\TransactionException;
-use Linio\Component\Database\Query\Builder;
 use Linio\Component\Database\Query\Transformer;
 use Linio\Component\Database\Query\Transformer\NamedArrayParameter;
 use PDO;
@@ -36,11 +35,6 @@ class PdoAdapter implements AdapterInterface
     protected $options;
 
     /**
-     * @var Builder
-     */
-    protected $builder;
-
-    /**
      * @var Transformer[]
      */
     protected $transformers = [];
@@ -52,13 +46,12 @@ class PdoAdapter implements AdapterInterface
     {
         $this->driver = $driver;
         $this->options = $options;
-        $this->builder = new Builder();
     }
 
     public function supportNamedParameterWithArrayValue(): void
     {
         if (!isset($this->transformers[NamedArrayParameter::class])) {
-            $this->transformers[NamedArrayParameter::class] = new NamedArrayParameter($this->builder);
+            $this->transformers[NamedArrayParameter::class] = new NamedArrayParameter();
         }
     }
 
