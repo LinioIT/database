@@ -28,29 +28,4 @@ class BuilderTest extends TestCase
 
         $this->assertEquals($expected, $actual);
     }
-
-    public function testItDoesBuildFlatParamsWithNestedArrayValues(): void
-    {
-        $values = [
-            ['1st-value', '2nd-value', '3rd-value'],
-            'string-value',
-            ['abc', 'def', 'ghi'],
-        ];
-
-        $builder = new Builder();
-
-        $actual = $builder->flatParams($values);
-
-        $expected = [
-            '1st-value',
-            '2nd-value',
-            '3rd-value',
-            'string-value',
-            'abc',
-            'def',
-            'ghi',
-        ];
-
-        $this->assertEquals($expected, $actual);
-    }
 }
