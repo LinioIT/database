@@ -23,24 +23,22 @@ class NamedArrayParameter implements Transformer
                 ));
             }
 
-            if ($isNumeric) {
+            if ($isNumeric || !$isArray) {
                 continue;
             }
 
-            if ($isArray) {
-                $placeholders = $this->placeholders($paramKey, $paramValue);
-                $params += $placeholders;
+            $placeholders = $this->placeholders($paramKey, $paramValue);
+            $params += $placeholders;
 
-                unset($params[$paramKey]);
+            unset($params[$paramKey]);
 
-                $paramNames = array_keys($placeholders);
+            $paramNames = array_keys($placeholders);
 
-                $hasDoubleColon = ($paramKey[0] === ':');
+            $hasDoubleColon = ($paramKey[0] === ':');
 
-                $paramNameToReplace = $hasDoubleColon ? $paramKey : ':' . $paramKey;
+            $paramNameToReplace = $hasDoubleColon ? $paramKey : ':' . $paramKey;
 
-                $query = str_replace($paramNameToReplace, implode(', ', $paramNames), $query);
-            }
+            $query = str_replace($paramNameToReplace, implode(', ', $paramNames), $query);
         }
     }
 
