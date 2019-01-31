@@ -45,8 +45,10 @@ class NamedArrayParameter implements Transformer
     {
         $placeholders = [];
 
-        foreach ($values as $v => $value) {
-            $name = sprintf(':%s_%d', ltrim($paramName, ':'), $v);
+        $counter = 0;
+
+        foreach ($values as $value) {
+            $name = sprintf(':%s_%d', ltrim($paramName, ':'), $counter++);
             $placeholders[$name] = $value;
         }
 
