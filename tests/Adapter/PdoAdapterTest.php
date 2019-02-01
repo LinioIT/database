@@ -188,10 +188,10 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals('Marketing', $actual);
     }
 
-    public function testIsFetchingValueWithNamedArrayParamUsingDoubleColon(): void
+    public function testIsFetchingValueWithNamedArrayParamUsingColonPrefix(): void
     {
         $actual = $this->adapter->fetchAll('SELECT `dept_name` FROM `departments` WHERE `dept_no` IN (:dept_no) ORDER BY dept_no', [
-            'dept_no' => [
+            ':dept_no' => [
                 'd001', // Marketing
                 'd004', // Production
             ],
