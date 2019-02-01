@@ -202,6 +202,20 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals('Production', $actual[1]['dept_name']);
     }
 
+    public function testIsFetchingValueWithNamedArrayParamNotUsingColonPrefix(): void
+    {
+        $actual = $this->adapter->fetchAll('SELECT `dept_name` FROM `departments` WHERE `dept_no` IN (:dept_no) ORDER BY dept_no', [
+            'dept_no' => [
+                'd001', // Marketing
+                'd004', // Production
+            ],
+        ]);
+
+        $this->assertEquals('Marketing', $actual[0]['dept_name']);
+
+        $this->assertEquals('Production', $actual[1]['dept_name']);
+    }
+
     public function testIsFetchingValueWithEmptyResult(): void
     {
         $actual = $this->adapter->fetchValue('SELECT `dept_name` FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd099']);
