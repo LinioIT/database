@@ -20,13 +20,13 @@ class NamedArrayParameter implements Transformer
                 throw new InvalidQueryException(sprintf('Unnamed parameter "%s" can\'t have array value.', $paramKey));
             }
 
-            $valuesIndexesByPlaceholder = $this->valuesIndexesByPlaceholder($paramKey, $paramValue);
+            $valuesIndexedByPlaceholder = $this->valuesIndexesByPlaceholder($paramKey, $paramValue);
 
-            $params += $valuesIndexesByPlaceholder;
+            $params += $valuesIndexedByPlaceholder;
 
             unset($params[$paramKey]);
 
-            $arrayParamKeys = array_keys($valuesIndexesByPlaceholder);
+            $arrayParamKeys = array_keys($valuesIndexedByPlaceholder);
 
             $startsWithColon = $paramKey[0] === ':';
 
