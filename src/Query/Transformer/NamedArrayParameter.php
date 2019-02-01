@@ -20,7 +20,7 @@ class NamedArrayParameter implements Transformer
                 throw new InvalidQueryException(sprintf('Unnamed parameter "%s" can\'t have array value.', $paramKey));
             }
 
-            $valuesIndexedByPlaceholder = $this->valuesIndexesByPlaceholder($paramKey, $paramValue);
+            $valuesIndexedByPlaceholder = $this->valuesIndexedByPlaceholder($paramKey, $paramValue);
 
             $params += $valuesIndexedByPlaceholder;
 
@@ -36,7 +36,7 @@ class NamedArrayParameter implements Transformer
         }
     }
 
-    protected function valuesIndexesByPlaceholder(string $paramName, array $paramValues): array
+    protected function valuesIndexedByPlaceholder(string $paramName, array $paramValues): array
     {
         $placeholders = [];
 
