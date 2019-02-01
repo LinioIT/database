@@ -11,7 +11,7 @@ class NamedArrayParameterTest extends TestCase
 {
     public function testItRejectNotNamedParamWithArrayValue(): void
     {
-        $query = 'SELECT id, email FROM users WHERE uuid in (?)';
+        $query = 'SELECT id, email FROM users WHERE uuid IN (?)';
 
         $params = [
             [
@@ -29,7 +29,7 @@ class NamedArrayParameterTest extends TestCase
 
     public function testItDoesTransformQueryWithOneArrayParameterUsingColonPrefix(): void
     {
-        $query = 'SELECT id, email FROM users WHERE uuid in (:uuid)';
+        $query = 'SELECT id, email FROM users WHERE uuid IN (:uuid)';
 
         $params = [
             ':uuid' => [
@@ -38,7 +38,7 @@ class NamedArrayParameterTest extends TestCase
             ],
         ];
 
-        $expectedQuery = 'SELECT id, email FROM users WHERE uuid in (:uuid_0, :uuid_1)';
+        $expectedQuery = 'SELECT id, email FROM users WHERE uuid IN (:uuid_0, :uuid_1)';
 
         $expectedParams = [
             ':uuid_0' => 'abc-13',
@@ -54,7 +54,7 @@ class NamedArrayParameterTest extends TestCase
 
     public function testItDoesTransformQueryWithOneArrayParameterNotUsingColonPrefix(): void
     {
-        $query = 'SELECT id, email FROM users WHERE uuid in (:uuid)';
+        $query = 'SELECT id, email FROM users WHERE uuid IN (:uuid)';
 
         $params = [
             'uuid' => [
@@ -63,7 +63,7 @@ class NamedArrayParameterTest extends TestCase
             ],
         ];
 
-        $expectedQuery = 'SELECT id, email FROM users WHERE uuid in (:uuid_0, :uuid_1)';
+        $expectedQuery = 'SELECT id, email FROM users WHERE uuid IN (:uuid_0, :uuid_1)';
 
         $expectedParams = [
             ':uuid_0' => 'abc-13',
@@ -79,7 +79,7 @@ class NamedArrayParameterTest extends TestCase
 
     public function testItDoesTransformQueryWithTwoArrayParametersUsingColonPrefix(): void
     {
-        $query = 'SELECT id, email FROM users WHERE uuid in (:uuid) and status IN (:status)';
+        $query = 'SELECT id, email FROM users WHERE uuid IN (:uuid) AND status IN (:status)';
 
         $params = [
             ':uuid' => [
@@ -93,7 +93,7 @@ class NamedArrayParameterTest extends TestCase
             ],
         ];
 
-        $expectedQuery = 'SELECT id, email FROM users WHERE uuid in (:uuid_0, :uuid_1) and status IN (:status_0, :status_1, :status_2)';
+        $expectedQuery = 'SELECT id, email FROM users WHERE uuid IN (:uuid_0, :uuid_1) AND status IN (:status_0, :status_1, :status_2)';
 
         $expectedParams = [
             ':uuid_0' => 'abc-13',
@@ -112,7 +112,7 @@ class NamedArrayParameterTest extends TestCase
 
     public function testItDoesTransformQueryWithTwoArrayParametersNotUsingColonPrefix(): void
     {
-        $query = 'SELECT id, email FROM users WHERE uuid in (:uuid) and status IN (:status)';
+        $query = 'SELECT id, email FROM users WHERE uuid IN (:uuid) AND status IN (:status)';
 
         $params = [
             'uuid' => [
@@ -126,7 +126,7 @@ class NamedArrayParameterTest extends TestCase
             ],
         ];
 
-        $expectedQuery = 'SELECT id, email FROM users WHERE uuid in (:uuid_0, :uuid_1) and status IN (:status_0, :status_1, :status_2)';
+        $expectedQuery = 'SELECT id, email FROM users WHERE uuid IN (:uuid_0, :uuid_1) AND status IN (:status_0, :status_1, :status_2)';
 
         $expectedParams = [
             ':uuid_0' => 'abc-13',
