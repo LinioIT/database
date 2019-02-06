@@ -11,8 +11,11 @@ class NamedArrayParameter implements Transformer
 {
     public function execute(string &$query, array &$params = []): void
     {
+        $finalParams = [];
+
         foreach ($params as $paramKey => $paramValue) {
             if (!is_array($paramValue)) {
+                $finalParams[$paramKey] = $paramValue;
                 continue;
             }
 
@@ -22,9 +25,7 @@ class NamedArrayParameter implements Transformer
 
             $valuesIndexedByPlaceholder = $this->valuesIndexedByPlaceholder($paramKey, $paramValue);
 
-            $params += $valuesIndexedByPlaceholder;
-
-            unset($params[$paramKey]);
+            $finalParams += $valuesIndexedByPlaceholder;
 
             $arrayParamKeys = array_keys($valuesIndexedByPlaceholder);
 
@@ -34,6 +35,8 @@ class NamedArrayParameter implements Transformer
 
             $query = str_replace($paramNameToReplace, implode(', ', $arrayParamKeys), $query);
         }
+
+        $params = $finalParams;
     }
 
     protected function valuesIndexedByPlaceholder(string $paramName, array $paramValues): array
