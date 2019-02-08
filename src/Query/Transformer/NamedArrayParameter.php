@@ -27,16 +27,23 @@ class NamedArrayParameter implements Transformer
 
             $finalParams += $valuesIndexedByPlaceholder;
 
-            $arrayParamKeys = array_keys($valuesIndexedByPlaceholder);
+            $placeholders = array_keys($valuesIndexedByPlaceholder);
 
-            $startsWithColon = $paramKey[0] === ':';
-
-            $paramNameToReplace = $startsWithColon ? $paramKey : ':' . $paramKey;
-
-            $query = str_replace($paramNameToReplace, implode(', ', $arrayParamKeys), $query);
+            $query = $this->transformQuery($query, $paramKey, $placeholders);
         }
 
         $params = $finalParams;
+    }
+
+    protected function transformQuery(string $query, string $currentPlaceholder, array $newPlaceholders): string
+    {
+        $startsWithColon = $currentPlaceholder[0] === ':';
+
+        $placeholderToReplace = $startsWithColon ? $currentPlaceholder : ':' . $currentPlaceholder;
+
+        $transformedQuery = str_replace($placeholderToReplace, implode(', ', $newPlaceholders), $query);
+
+        return $transformedQuery;
     }
 
     protected function getValuesIndexedByPlaceholder(string $paramName, array $paramValues): array
