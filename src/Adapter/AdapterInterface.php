@@ -33,6 +33,8 @@ interface AdapterInterface
     /**
      * @throws InvalidQueryException
      * @throws FetchException
+     *
+     * @return mixed
      */
     public function fetchValue(string $query, array $params = []);
 

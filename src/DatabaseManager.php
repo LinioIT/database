@@ -7,7 +7,7 @@ namespace Linio\Component\Database;
 use Linio\Component\Database\Adapter\AdapterInterface;
 use Linio\Component\Database\Entity\Connection;
 use Linio\Component\Database\Entity\LazyFetch;
-use Linio\Component\Database\Entity\SlaveConnectionCollection;
+use Linio\Component\Database\Entity\SlaveConnections;
 use Linio\Component\Database\Exception\DatabaseConnectionException;
 use Linio\Component\Database\Exception\DatabaseException;
 use Linio\Component\Database\Exception\FetchException;
@@ -19,54 +19,27 @@ use Psr\Log\NullLogger;
 class DatabaseManager
 {
     // Drivers
-    const DRIVER_MYSQL = 'mysql';
-    const DRIVER_PGSQL = 'pgsql';
-    const DRIVER_SQLITE = 'sqlite';
-    const DRIVER_SQLSRV = 'sqlsrv';
+    public const DRIVER_MYSQL = 'mysql';
+    public const DRIVER_PGSQL = 'pgsql';
+    public const DRIVER_SQLITE = 'sqlite';
+    public const DRIVER_SQLSRV = 'sqlsrv';
 
     // Roles
-    const ROLE_MASTER = 'master';
-    const ROLE_SLAVE = 'slave';
+    public const ROLE_MASTER = 'master';
+    public const ROLE_SLAVE = 'slave';
 
-    /**
-     * @var Connection
-     */
-    protected $masterConnection;
+    protected ?Connection $masterConnection = null;
+    protected SlaveConnections $slaveConnections;
+    protected array $adapterOptions = [];
+    protected bool $safeMode = true;
+    protected bool $hasActiveTransaction = false;
+    protected bool $hasUsedWriteAdapter = false;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var SlaveConnectionCollection
-     */
-    protected $slaveConnections;
-
-    /**
-     * @var array
-     */
-    protected $adapterOptions = [];
-
-    /**
-     * @var bool
-     */
-    protected $safeMode = true;
-
-    /**
-     * @var bool
-     */
-    protected $hasActiveTransaction = false;
-
-    /**
-     * @var bool
-     */
-    protected $hasUsedWriteAdapter = false;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    public function __construct($safeMode = true)
+    public function __construct(bool $safeMode = true)
     {
         $this->setAdapterOptions();
-        $this->slaveConnections = new SlaveConnectionCollection();
+        $this->slaveConnections = new SlaveConnections();
         $this->safeMode = $safeMode;
         $this->logger = new NullLogger();
     }
@@ -92,7 +65,7 @@ class DatabaseManager
     }
 
     /**
-     * @return Connection[]
+     * @return array<string, Connection|Connection[]|null>
      */
     public function getConnections(): array
     {
@@ -135,6 +108,8 @@ class DatabaseManager
     /**
      * @throws InvalidQueryException
      * @throws FetchException
+     *
+     * @return mixed
      */
     public function fetchValue(string $query, array $params = [], bool $forceMasterConnection = false)
     {
@@ -207,6 +182,8 @@ class DatabaseManager
 
     /**
      * @throws DatabaseException
+     *
+     * @return mixed
      */
     public function executeTransaction(callable $transaction)
     {
@@ -285,25 +262,29 @@ class DatabaseManager
     /**
      * @throws DatabaseException
      */
-    public function getLastInsertId(string $name = null): string
+    public function getLastInsertId(string $name = null): ?string
     {
         try {
             return $this->getWriteAdapter()->getLastInsertId($name);
         } catch (DatabaseException $exception) {
             $this->logException($exception);
         }
+
+        return null;
     }
 
     /**
      * @throws DatabaseException
      */
-    public function escapeValue(string $value): string
+    public function escapeValue(string $value): ?string
     {
         try {
             return $this->getWriteAdapter()->escapeValue($value);
         } catch (DatabaseException $exception) {
             $this->logException($exception);
         }
+
+        return null;
     }
 
     /**
@@ -397,6 +378,10 @@ class DatabaseManager
     protected function getWriteAdapter(): AdapterInterface
     {
         $this->hasUsedWriteAdapter = true;
+
+        if (!$this->masterConnection) {
+            throw new DatabaseConnectionException('No master connection found');
+        }
 
         return $this->masterConnection->getAdapter();
     }

@@ -10,10 +10,7 @@ use PDOStatement;
 
 class LazyFetch
 {
-    /**
-     * @var PDOStatement
-     */
-    protected $pdoStatement;
+    protected PDOStatement $pdoStatement;
 
     public function __construct(PDOStatement $pdoStatement)
     {

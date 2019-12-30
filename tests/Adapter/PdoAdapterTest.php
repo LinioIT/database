@@ -9,8 +9,8 @@ use Linio\Component\Database\Entity\LazyFetch;
 use Linio\Component\Database\Exception\InvalidQueryException;
 use Linio\Component\Database\Exception\TransactionException;
 use PDO;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @constant TEST_DATABASE_HOST
@@ -21,20 +21,9 @@ use PHPUnit\Framework\TestCase;
  */
 class PdoAdapterTest extends TestCase
 {
-    /**
-     * @var PdoAdapter
-     */
-    protected $adapter;
-
-    /**
-     * @var PDO
-     */
-    protected $pdo;
-
-    /**
-     * @var array
-     */
-    protected $driverOptions;
+    protected PdoAdapter $adapter;
+    protected PDO $pdo;
+    protected array $driverOptions = [];
 
     protected function setUp(): void
     {
@@ -58,13 +47,13 @@ class PdoAdapterTest extends TestCase
     {
         $testAdapter = new PdoAdapter(DatabaseManager::DRIVER_MYSQL, $this->driverOptions, DatabaseManager::ROLE_MASTER);
 
-        $adapterPdo = Assert::readAttribute($testAdapter, 'pdo');
+        $adapterPdo = $this->getInstanceProperty($testAdapter, 'pdo');
         $this->assertNull($adapterPdo);
 
         $testAdapter->execute('SELECT 1');
 
         /** @var PDO $adapterPdo */
-        $adapterPdo = Assert::readAttribute($testAdapter, 'pdo');
+        $adapterPdo = $this->getInstanceProperty($testAdapter, 'pdo');
         $this->assertInstanceOf(PDO::class, $adapterPdo);
     }
 
@@ -74,7 +63,7 @@ class PdoAdapterTest extends TestCase
         $testAdapter->execute('SELECT 1');
 
         /** @var PDO $adapterPdo */
-        $adapterPdo = Assert::readAttribute($testAdapter, 'pdo');
+        $adapterPdo = $this->getInstanceProperty($testAdapter, 'pdo');
         $this->assertEquals(PDO::ERRMODE_EXCEPTION, $adapterPdo->getAttribute(PDO::ATTR_ERRMODE));
     }
 
@@ -84,7 +73,7 @@ class PdoAdapterTest extends TestCase
         $testAdapter->execute('SELECT 1');
 
         /** @var PDO $adapterPdo */
-        $adapterPdo = Assert::readAttribute($testAdapter, 'pdo');
+        $adapterPdo = $this->getInstanceProperty($testAdapter, 'pdo');
         $this->assertEquals(PDO::ERRMODE_EXCEPTION, $adapterPdo->getAttribute(PDO::ATTR_ERRMODE));
     }
 
@@ -103,7 +92,7 @@ class PdoAdapterTest extends TestCase
         $testAdapter->execute('SELECT 1');
 
         /** @var PDO $adapterPdo */
-        $adapterPdo = Assert::readAttribute($testAdapter, 'pdo');
+        $adapterPdo = $this->getInstanceProperty($testAdapter, 'pdo');
         $this->assertTrue($adapterPdo->getAttribute(PDO::ATTR_PERSISTENT));
         $this->assertEquals(PDO::ERRMODE_WARNING, $adapterPdo->getAttribute(PDO::ATTR_ERRMODE));
     }
@@ -112,9 +101,9 @@ class PdoAdapterTest extends TestCase
     {
         $actual = $this->adapter->fetchAll('SELECT * FROM `departments` ORDER BY `dept_no`');
 
-        $this->assertInternalType('array', $actual);
+        $this->assertIsArray($actual);
         $firstRow = reset($actual);
-        $this->assertInternalType('array', $firstRow);
+        $this->assertIsArray($firstRow);
         $this->assertArrayHasKey('dept_id', $firstRow);
         $this->assertArrayHasKey('dept_no', $firstRow);
         $this->assertEquals('d001', $firstRow['dept_no']);
@@ -126,9 +115,9 @@ class PdoAdapterTest extends TestCase
     {
         $actual = $this->adapter->fetchAll('SELECT * FROM `departments` WHERE `dept_no` = ?', ['d001']);
 
-        $this->assertInternalType('array', $actual);
+        $this->assertIsArray($actual);
         $firstRow = reset($actual);
-        $this->assertInternalType('array', $firstRow);
+        $this->assertIsArray($firstRow);
         $this->assertArrayHasKey('dept_id', $firstRow);
         $this->assertArrayHasKey('dept_no', $firstRow);
         $this->assertEquals('d001', $firstRow['dept_no']);
@@ -140,9 +129,9 @@ class PdoAdapterTest extends TestCase
     {
         $actual = $this->adapter->fetchAll('SELECT * FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd001']);
 
-        $this->assertInternalType('array', $actual);
+        $this->assertIsArray($actual);
         $firstRow = reset($actual);
-        $this->assertInternalType('array', $firstRow);
+        $this->assertIsArray($firstRow);
         $this->assertArrayHasKey('dept_id', $firstRow);
         $this->assertArrayHasKey('dept_no', $firstRow);
         $this->assertEquals('d001', $firstRow['dept_no']);
@@ -154,7 +143,7 @@ class PdoAdapterTest extends TestCase
     {
         $actual = $this->adapter->fetchAll('SELECT * FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd099']);
 
-        $this->assertInternalType('array', $actual);
+        $this->assertIsArray($actual);
         $this->assertEmpty($actual);
     }
 
@@ -162,7 +151,7 @@ class PdoAdapterTest extends TestCase
     {
         $actual = $this->adapter->fetchOne('SELECT * FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd001']);
 
-        $this->assertInternalType('array', $actual);
+        $this->assertIsArray($actual);
         $this->assertArrayHasKey('dept_id', $actual);
         $this->assertArrayHasKey('dept_no', $actual);
         $this->assertEquals('d001', $actual['dept_no']);
@@ -174,7 +163,7 @@ class PdoAdapterTest extends TestCase
     {
         $actual = $this->adapter->fetchOne('SELECT * FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd099']);
 
-        $this->assertInternalType('array', $actual);
+        $this->assertIsArray($actual);
         $this->assertEmpty($actual);
     }
 
@@ -196,7 +185,7 @@ class PdoAdapterTest extends TestCase
     {
         $actual = $this->adapter->fetchKeyPairs('SELECT `dept_no`,`dept_name` FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd001']);
 
-        $this->assertInternalType('array', $actual);
+        $this->assertIsArray($actual);
         $this->assertArrayHasKey('d001', $actual);
         $this->assertEquals('Marketing', $actual['d001']);
     }
@@ -205,7 +194,7 @@ class PdoAdapterTest extends TestCase
     {
         $actual = $this->adapter->fetchKeyPairs('SELECT `dept_no`,`dept_name` FROM `departments` WHERE `dept_no` = :dept_no', ['dept_no' => 'd099']);
 
-        $this->assertInternalType('array', $actual);
+        $this->assertIsArray($actual);
         $this->assertEmpty($actual);
     }
 
@@ -213,7 +202,7 @@ class PdoAdapterTest extends TestCase
     {
         $actual = $this->adapter->fetchColumn('SELECT `dept_no`,`dept_name` FROM `departments` ORDER BY `dept_no`', [], 0);
 
-        $this->assertInternalType('array', $actual);
+        $this->assertIsArray($actual);
         $this->assertCount(9, $actual);
         $firstValue = reset($actual);
         $this->assertEquals('d001', $firstValue);
@@ -223,7 +212,7 @@ class PdoAdapterTest extends TestCase
     {
         $actual = $this->adapter->fetchColumn('SELECT `dept_no`,`dept_name` FROM `departments` ORDER BY `dept_no`', [], 1);
 
-        $this->assertInternalType('array', $actual);
+        $this->assertIsArray($actual);
         $this->assertCount(9, $actual);
         $firstValue = reset($actual);
         $this->assertEquals('Marketing', $firstValue);
@@ -236,7 +225,7 @@ class PdoAdapterTest extends TestCase
         $this->assertInstanceOf(LazyFetch::class, $lazyFetch);
 
         $firstRow = $lazyFetch->fetch();
-        $this->assertInternalType('array', $firstRow);
+        $this->assertIsArray($firstRow);
         $this->assertArrayHasKey('dept_id', $firstRow);
         $this->assertArrayHasKey('dept_no', $firstRow);
         $this->assertEquals('d001', $firstRow['dept_no']);
@@ -244,7 +233,7 @@ class PdoAdapterTest extends TestCase
         $this->assertEquals('Marketing', $firstRow['dept_name']);
 
         $secondRow = $lazyFetch->fetch();
-        $this->assertInternalType('array', $secondRow);
+        $this->assertIsArray($secondRow);
         $this->assertArrayHasKey('dept_id', $secondRow);
         $this->assertArrayHasKey('dept_no', $secondRow);
         $this->assertEquals('d002', $secondRow['dept_no']);
@@ -256,7 +245,7 @@ class PdoAdapterTest extends TestCase
         }
 
         $endOfRows = $lazyFetch->fetch();
-        $this->assertInternalType('array', $endOfRows);
+        $this->assertIsArray($endOfRows);
         $this->assertEmpty($endOfRows);
     }
 
@@ -378,5 +367,14 @@ class PdoAdapterTest extends TestCase
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ]
         );
+    }
+
+    protected function getInstanceProperty(object $instance, string $propertyName)
+    {
+        $reflection = new ReflectionClass($instance);
+        $property = $reflection->getProperty($propertyName);
+        $property->setAccessible(true);
+
+        return $property->getValue($instance);
     }
 }
