@@ -6,10 +6,7 @@ namespace Linio\Component\Database;
 
 trait DatabaseAware
 {
-    /**
-     * @var DatabaseManager
-     */
-    protected $database;
+    protected DatabaseManager $database;
 
     public function getDatabase(): DatabaseManager
     {

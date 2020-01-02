@@ -6,37 +6,14 @@ namespace Linio\Component\Database\Entity;
 
 use Linio\Component\Database\Adapter\AdapterInterface;
 
-class SlaveConnectionCollection
+class SlaveConnections
 {
-    /**
-     * @var Connection[]
-     */
-    protected $connections = [];
-
-    /**
-     * @var bool
-     */
-    protected $isEmpty = true;
-
-    /**
-     * @var bool
-     */
-    protected $hasOnlyOneConnection;
-
-    /**
-     * @var array
-     */
-    protected $originalWeights = [];
-
-    /**
-     * @var array
-     */
-    protected $connectionMap = [];
-
-    /**
-     * @var int
-     */
-    protected $totalWeight;
+    protected array $connections = [];
+    protected bool $isEmpty = true;
+    protected bool $hasOnlyOneConnection = true;
+    protected array $originalWeights = [];
+    protected array $connectionMap = [];
+    protected int $totalWeight;
 
     public function add(Connection $connection): void
     {
@@ -101,9 +78,8 @@ class SlaveConnectionCollection
 
     protected function getWeightedRandomConnection(): Connection
     {
-        $rand = rand(1, $this->totalWeight);
-        $connection = $this->connections[$this->connectionMap[$rand]];
+        $rand = random_int(1, $this->totalWeight);
 
-        return $connection;
+        return $this->connections[$this->connectionMap[$rand]];
     }
 }

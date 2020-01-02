@@ -8,30 +8,11 @@ use Linio\Component\Database\Adapter\AdapterInterface;
 
 class Connection
 {
-    /**
-     * @var AdapterInterface
-     */
-    protected $adapter;
-
-    /**
-     * @var string
-     */
-    protected $driver;
-
-    /**
-     * @var array
-     */
-    protected $options;
-
-    /**
-     * @var string
-     */
-    protected $role;
-
-    /**
-     * @var int
-     */
-    protected $weight;
+    protected AdapterInterface $adapter;
+    protected string $driver;
+    protected array $options = [];
+    protected string $role;
+    protected int $weight;
 
     public function getAdapter(): AdapterInterface
     {

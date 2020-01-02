@@ -103,7 +103,7 @@ class DatabaseManagerTest extends TestCase
 
         $actual = $db->getConnections(DatabaseManager::ROLE_MASTER);
 
-        $this->assertInternalType('array', $actual);
+        $this->assertIsArray($actual);
         $this->assertInstanceOf(Connection::class, $actual[DatabaseManager::ROLE_MASTER]);
     }
 

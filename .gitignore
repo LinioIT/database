@@ -8,3 +8,4 @@ phpunit.xml
 cache.properties
 coverage.xml
 .php_cs.cache
+.phpunit.result.cache

@@ -17,20 +17,10 @@ use PDOStatement;
 
 class PdoAdapter implements AdapterInterface
 {
-    /**
-     * @var PDO
-     */
-    protected $pdo;
-
-    /**
-     * @var string
-     */
-    protected $driver;
-
-    /**
-     * @var array
-     */
-    protected $options;
+    protected ?PDO $pdo = null;
+    protected string $driver;
+    protected array $options = [];
+    protected string $role;
 
     /**
      * @throws DatabaseConnectionException
@@ -39,6 +29,7 @@ class PdoAdapter implements AdapterInterface
     {
         $this->driver = $driver;
         $this->options = $options;
+        $this->role = $role;
     }
 
     /**
@@ -52,6 +43,10 @@ class PdoAdapter implements AdapterInterface
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $exception) {
             throw new FetchException($exception->getMessage(), $exception->getCode(), $exception);
+        }
+
+        if ($rows === false) {
+            return [];
         }
 
         return $rows;
@@ -80,6 +75,8 @@ class PdoAdapter implements AdapterInterface
     /**
      * @throws InvalidQueryException
      * @throws FetchException
+     *
+     * @return mixed
      */
     public function fetchValue(string $query, array $params = [])
     {
@@ -115,6 +112,10 @@ class PdoAdapter implements AdapterInterface
             throw new FetchException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
+        if ($keyPairs === false) {
+            return [];
+        }
+
         return $keyPairs;
     }
 
@@ -129,6 +130,10 @@ class PdoAdapter implements AdapterInterface
             $rows = $stmt->fetchAll(PDO::FETCH_COLUMN, $columnIndex);
         } catch (PDOException $exception) {
             throw new FetchException($exception->getMessage(), $exception->getCode(), $exception);
+        }
+
+        if ($rows === false) {
+            return [];
         }
 
         return $rows;
