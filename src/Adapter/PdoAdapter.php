@@ -158,7 +158,7 @@ class PdoAdapter implements AdapterInterface
             try {
                 return $this->getPdo()->exec($query);
             } catch (PDOException $exception) {
-                throw new InvalidQueryException($exception->getMessage(), 0, $exception);
+                throw new InvalidQueryException($exception->getMessage(), $exception->getCode(), $exception);
             }
         }
 
@@ -176,7 +176,7 @@ class PdoAdapter implements AdapterInterface
             $stmt = $this->getPdo()->prepare($query);
             $stmt->execute($params);
         } catch (PDOException $exception) {
-            throw new InvalidQueryException($exception->getMessage(), 0, $exception);
+            throw new InvalidQueryException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
         return $stmt;
