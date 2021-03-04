@@ -5,7 +5,8 @@ parameters:
         - src
     ignoreErrors:
         # Wrong PDO type definition
-        - '#Parameter \#1 \$seqname of method PDO\:\:lastInsertId\(\) expects string#'
+        - '#Parameter \#1 \$name of method PDO\:\:lastInsertId\(\) expects string#'
+        - '#Method Linio\\Component\\Database\\Adapter\\PdoAdapter\:\:execute\(\) should return int but returns int\|false#'
 
         # phpstan is unable to detect factory method setting property
         - '#Method Linio\\Component\\Database\\Adapter\\PdoAdapter\:\:getPdo\(\) should return PDO but returns PDO\|null.#'
