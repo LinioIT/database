@@ -12,13 +12,6 @@ use PDO;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
-/**
- * @constant TEST_DATABASE_HOST
- * @constant TEST_DATABASE_PORT
- * @constant TEST_DATABASE_DBNAME
- * @constant TEST_DATABASE_USERNAME
- * @constant TEST_DATABASE_PASSWORD
- */
 class PdoAdapterTest extends TestCase
 {
     protected PdoAdapter $adapter;
@@ -28,11 +21,11 @@ class PdoAdapterTest extends TestCase
     protected function setUp(): void
     {
         $this->driverOptions = [
-            'host' => TEST_DATABASE_HOST,
-            'port' => TEST_DATABASE_PORT,
-            'dbname' => TEST_DATABASE_DBNAME,
-            'username' => TEST_DATABASE_USERNAME,
-            'password' => TEST_DATABASE_PASSWORD,
+            'host' => getenv('TEST_DATABASE_HOST'),
+            'port' => getenv('TEST_DATABASE_PORT'),
+            'dbname' => getenv('TEST_DATABASE_DBNAME'),
+            'username' => getenv('TEST_DATABASE_USERNAME'),
+            'password' => getenv('TEST_DATABASE_PASSWORD'),
         ];
         $this->createDatabaseFixture();
         $this->adapter = new PdoAdapter(DatabaseManager::DRIVER_MYSQL, $this->driverOptions, DatabaseManager::ROLE_MASTER);

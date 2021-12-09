@@ -14,11 +14,11 @@
     </include>
   </coverage>
   <php>
-    <const name="TEST_DATABASE_HOST" value="127.0.0.1"/>
-    <const name="TEST_DATABASE_PORT" value="3306"/>
-    <const name="TEST_DATABASE_DBNAME" value="framework_database_test"/>
-    <const name="TEST_DATABASE_USERNAME" value="root"/>
-    <const name="TEST_DATABASE_PASSWORD" value="123456"/>
+    <env name="TEST_DATABASE_HOST" value="127.0.0.1"/>
+    <env name="TEST_DATABASE_PORT" value="3306"/>
+    <env name="TEST_DATABASE_DBNAME" value="framework_database_test"/>
+    <env name="TEST_DATABASE_USERNAME" value="root"/>
+    <env name="TEST_DATABASE_PASSWORD" value="123456"/>
   </php>
   <testsuites>
     <testsuite name="default">

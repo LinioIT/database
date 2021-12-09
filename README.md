@@ -1,5 +1,5 @@
 # Linio Database
-[![Latest Stable Version](https://poser.pugx.org/linio/database/v/stable.svg)](https://packagist.org/packages/linio/database) [![License](https://poser.pugx.org/linio/database/license.svg)](https://packagist.org/packages/linio/database) [![Build Status](https://secure.travis-ci.org/LinioIT/database.png)](http://travis-ci.org/LinioIT/database)
+[![Latest Stable Version](https://poser.pugx.org/linio/database/v/stable.svg)](https://packagist.org/packages/linio/database) [![License](https://poser.pugx.org/linio/database/license.svg)](https://packagist.org/packages/linio/database) ![Build Status](https://github.com/LinioIT/database/actions/workflows/php.yml/badge.svg)
 
 Linio Database is a component of the Linio Framework. It aims to
 abstract database access by wrapping PDO and providing helper methods to speed up development.

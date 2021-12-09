@@ -9,13 +9,6 @@ use Linio\Component\Database\Exception\DatabaseConnectionException;
 use Linio\Component\Database\Exception\TransactionException;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @constant TEST_DATABASE_HOST
- * @constant TEST_DATABASE_PORT
- * @constant TEST_DATABASE_DBNAME
- * @constant TEST_DATABASE_USERNAME
- * @constant TEST_DATABASE_PASSWORD
- */
 class DatabaseManagerTest extends TestCase
 {
     public function testIsConstructingService(): void
@@ -29,11 +22,11 @@ class DatabaseManagerTest extends TestCase
     {
         $db = new DatabaseManager();
         $connectionOptions = [
-            'host' => TEST_DATABASE_HOST,
-            'port' => TEST_DATABASE_PORT,
-            'dbname' => TEST_DATABASE_DBNAME,
-            'username' => TEST_DATABASE_USERNAME,
-            'password' => TEST_DATABASE_PASSWORD,
+            'host' => getenv('TEST_DATABASE_HOST'),
+            'port' => getenv('TEST_DATABASE_PORT'),
+            'dbname' => getenv('TEST_DATABASE_DBNAME'),
+            'username' => getenv('TEST_DATABASE_USERNAME'),
+            'password' => getenv('TEST_DATABASE_PASSWORD'),
         ];
         $actual = $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
 
@@ -44,11 +37,11 @@ class DatabaseManagerTest extends TestCase
     {
         $db = new DatabaseManager();
         $connectionOptions = [
-            'host' => TEST_DATABASE_HOST,
-            'port' => TEST_DATABASE_PORT,
-            'dbname' => TEST_DATABASE_DBNAME,
-            'username' => TEST_DATABASE_USERNAME,
-            'password' => TEST_DATABASE_PASSWORD,
+            'host' => getenv('TEST_DATABASE_HOST'),
+            'port' => getenv('TEST_DATABASE_PORT'),
+            'dbname' => getenv('TEST_DATABASE_DBNAME'),
+            'username' => getenv('TEST_DATABASE_USERNAME'),
+            'password' => getenv('TEST_DATABASE_PASSWORD'),
         ];
 
         $this->expectException(DatabaseConnectionException::class);
@@ -61,9 +54,9 @@ class DatabaseManagerTest extends TestCase
     {
         $db = new DatabaseManager();
         $connectionOptions = [
-            'host' => TEST_DATABASE_HOST,
-            'port' => TEST_DATABASE_PORT,
-            'dbname' => TEST_DATABASE_DBNAME,
+            'host' => getenv('TEST_DATABASE_HOST'),
+            'port' => getenv('TEST_DATABASE_PORT'),
+            'dbname' => getenv('TEST_DATABASE_DBNAME'),
             'username' => 'nop',
             'password' => 'nop',
         ];
@@ -77,9 +70,9 @@ class DatabaseManagerTest extends TestCase
     {
         $db = new DatabaseManager();
         $connectionOptions = [
-            'host' => TEST_DATABASE_HOST,
-            'port' => TEST_DATABASE_PORT,
-            'dbname' => TEST_DATABASE_DBNAME,
+            'host' => getenv('TEST_DATABASE_HOST'),
+            'port' => getenv('TEST_DATABASE_PORT'),
+            'dbname' => getenv('TEST_DATABASE_DBNAME'),
             'username' => 'nop',
             'password' => 'nop',
         ];
@@ -93,11 +86,11 @@ class DatabaseManagerTest extends TestCase
     {
         $db = new DatabaseManager();
         $connectionOptions = [
-            'host' => TEST_DATABASE_HOST,
-            'port' => TEST_DATABASE_PORT,
-            'dbname' => TEST_DATABASE_DBNAME,
-            'username' => TEST_DATABASE_USERNAME,
-            'password' => TEST_DATABASE_PASSWORD,
+            'host' => getenv('TEST_DATABASE_HOST'),
+            'port' => getenv('TEST_DATABASE_PORT'),
+            'dbname' => getenv('TEST_DATABASE_DBNAME'),
+            'username' => getenv('TEST_DATABASE_USERNAME'),
+            'password' => getenv('TEST_DATABASE_PASSWORD'),
         ];
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
 
@@ -111,11 +104,11 @@ class DatabaseManagerTest extends TestCase
     {
         $db = new DatabaseManager();
         $connectionOptions = [
-            'host' => TEST_DATABASE_HOST,
-            'port' => TEST_DATABASE_PORT,
-            'dbname' => TEST_DATABASE_DBNAME,
-            'username' => TEST_DATABASE_USERNAME,
-            'password' => TEST_DATABASE_PASSWORD,
+            'host' => getenv('TEST_DATABASE_HOST'),
+            'port' => getenv('TEST_DATABASE_PORT'),
+            'dbname' => getenv('TEST_DATABASE_DBNAME'),
+            'username' => getenv('TEST_DATABASE_USERNAME'),
+            'password' => getenv('TEST_DATABASE_PASSWORD'),
         ];
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_SLAVE);
@@ -128,11 +121,11 @@ class DatabaseManagerTest extends TestCase
     {
         $db = new DatabaseManager();
         $connectionOptions = [
-            'host' => TEST_DATABASE_HOST,
-            'port' => TEST_DATABASE_PORT,
-            'dbname' => TEST_DATABASE_DBNAME,
-            'username' => TEST_DATABASE_USERNAME,
-            'password' => TEST_DATABASE_PASSWORD,
+            'host' => getenv('TEST_DATABASE_HOST'),
+            'port' => getenv('TEST_DATABASE_PORT'),
+            'dbname' => getenv('TEST_DATABASE_DBNAME'),
+            'username' => getenv('TEST_DATABASE_USERNAME'),
+            'password' => getenv('TEST_DATABASE_PASSWORD'),
         ];
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_SLAVE);
@@ -146,11 +139,11 @@ class DatabaseManagerTest extends TestCase
     {
         $db = new DatabaseManager();
         $connectionOptions = [
-            'host' => TEST_DATABASE_HOST,
-            'port' => TEST_DATABASE_PORT,
-            'dbname' => TEST_DATABASE_DBNAME,
-            'username' => TEST_DATABASE_USERNAME,
-            'password' => TEST_DATABASE_PASSWORD,
+            'host' => getenv('TEST_DATABASE_HOST'),
+            'port' => getenv('TEST_DATABASE_PORT'),
+            'dbname' => getenv('TEST_DATABASE_DBNAME'),
+            'username' => getenv('TEST_DATABASE_USERNAME'),
+            'password' => getenv('TEST_DATABASE_PASSWORD'),
         ];
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_SLAVE);
@@ -163,11 +156,11 @@ class DatabaseManagerTest extends TestCase
     {
         $db = new DatabaseManager();
         $connectionOptions = [
-            'host' => TEST_DATABASE_HOST,
-            'port' => TEST_DATABASE_PORT,
-            'dbname' => TEST_DATABASE_DBNAME,
-            'username' => TEST_DATABASE_USERNAME,
-            'password' => TEST_DATABASE_PASSWORD,
+            'host' => getenv('TEST_DATABASE_HOST'),
+            'port' => getenv('TEST_DATABASE_PORT'),
+            'dbname' => getenv('TEST_DATABASE_DBNAME'),
+            'username' => getenv('TEST_DATABASE_USERNAME'),
+            'password' => getenv('TEST_DATABASE_PASSWORD'),
         ];
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_SLAVE);
@@ -190,11 +183,11 @@ class DatabaseManagerTest extends TestCase
     {
         $db = new DatabaseManager();
         $connectionOptions = [
-            'host' => TEST_DATABASE_HOST,
-            'port' => TEST_DATABASE_PORT,
-            'dbname' => TEST_DATABASE_DBNAME,
-            'username' => TEST_DATABASE_USERNAME,
-            'password' => TEST_DATABASE_PASSWORD,
+            'host' => getenv('TEST_DATABASE_HOST'),
+            'port' => getenv('TEST_DATABASE_PORT'),
+            'dbname' => getenv('TEST_DATABASE_DBNAME'),
+            'username' => getenv('TEST_DATABASE_USERNAME'),
+            'password' => getenv('TEST_DATABASE_PASSWORD'),
         ];
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_SLAVE);
