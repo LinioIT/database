@@ -31,16 +31,14 @@ class DatabaseManager
     protected ?Connection $masterConnection = null;
     protected SlaveConnections $slaveConnections;
     protected array $adapterOptions = [];
-    protected bool $safeMode = true;
     protected bool $hasActiveTransaction = false;
     protected bool $hasUsedWriteAdapter = false;
     protected LoggerInterface $logger;
 
-    public function __construct(bool $safeMode = true)
+    public function __construct(protected bool $safeMode = true)
     {
         $this->setAdapterOptions();
         $this->slaveConnections = new SlaveConnections();
-        $this->safeMode = $safeMode;
         $this->logger = new NullLogger();
     }
 
@@ -368,7 +366,15 @@ class DatabaseManager
             return $this->getWriteAdapter();
         }
 
-        if ($forceMasterConnection || $this->hasActiveTransaction || $this->slaveConnections->isEmpty()) {
+        if ($forceMasterConnection) {
+            return $this->getWriteAdapter();
+        }
+
+        if ($this->hasActiveTransaction) {
+            return $this->getWriteAdapter();
+        }
+
+        if ($this->slaveConnections->isEmpty()) {
             return $this->getWriteAdapter();
         }
 

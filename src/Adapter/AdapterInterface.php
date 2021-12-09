@@ -78,7 +78,7 @@ interface AdapterInterface
     /**
      * @throws DatabaseException
      */
-    public function getLastInsertId(string $name = null): string;
+    public function getLastInsertId(string $name = null): ?string;
 
     /**
      * @throws DatabaseException Support for the database has not been implemented yet

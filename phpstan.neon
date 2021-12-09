@@ -1,12 +1,12 @@
 parameters:
-    level: max
+    level: 8
     checkMissingIterableValueType: false
     paths:
         - src
     ignoreErrors:
-        # Wrong PDO type definition
-        - '#Parameter \#1 \$name of method PDO\:\:lastInsertId\(\) expects string#'
-        - '#Method Linio\\Component\\Database\\Adapter\\PdoAdapter\:\:execute\(\) should return int but returns int\|false#'
-
-        # phpstan is unable to detect factory method setting property
-        - '#Method Linio\\Component\\Database\\Adapter\\PdoAdapter\:\:getPdo\(\) should return PDO but returns PDO\|null.#'
+        -
+            message: '#but returns object#'
+            path: src/DatabaseManager.php
+        -
+            message: '#should return PDO but returns PDO\|null#'
+            path: src/Adapter/PdoAdapter.php

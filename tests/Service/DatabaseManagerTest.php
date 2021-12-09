@@ -137,9 +137,7 @@ class DatabaseManagerTest extends TestCase
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_MASTER);
         $db->addConnection(DatabaseManager::DRIVER_MYSQL, $connectionOptions, DatabaseManager::ROLE_SLAVE);
 
-        $callable = function (DatabaseManager $databaseManager): string {
-            return $databaseManager->fetchValue('SELECT 1');
-        };
+        $callable = fn (DatabaseManager $databaseManager): string => $databaseManager->fetchValue('SELECT 1');
 
         $this->assertEquals('1', $db->executeTransaction($callable));
     }

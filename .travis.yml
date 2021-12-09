@@ -2,7 +2,8 @@ language: php
 services: mysql
 
 php:
-  - 7.4
+  - 8.0
+  - 8.1
 
 cache:
   directories:

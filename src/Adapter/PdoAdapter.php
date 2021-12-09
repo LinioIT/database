@@ -18,18 +18,15 @@ use PDOStatement;
 class PdoAdapter implements AdapterInterface
 {
     protected ?PDO $pdo = null;
-    protected string $driver;
-    protected array $options = [];
-    protected string $role;
 
     /**
      * @throws DatabaseConnectionException
      */
-    public function __construct(string $driver, array $options, string $role)
-    {
-        $this->driver = $driver;
-        $this->options = $options;
-        $this->role = $role;
+    public function __construct(
+        protected string $driver,
+        protected array $options,
+        protected string $role,
+    ) {
     }
 
     /**
@@ -156,7 +153,13 @@ class PdoAdapter implements AdapterInterface
     {
         if (empty($params)) {
             try {
-                return $this->getPdo()->exec($query);
+                $result = $this->getPdo()->exec($query);
+
+                if ($result === false) {
+                    throw new PDOException((string) $this->getPdo()->errorCode());
+                }
+
+                return $result;
             } catch (PDOException $exception) {
                 throw new InvalidQueryException($exception->getMessage(), (int) $exception->getCode(), $exception);
             }
@@ -221,10 +224,12 @@ class PdoAdapter implements AdapterInterface
     /**
      * @throws DatabaseException
      */
-    public function getLastInsertId(string $name = null): string
+    public function getLastInsertId(string $name = null): ?string
     {
         try {
-            return $this->getPdo()->lastInsertId($name);
+            $lastInsertId = $this->getPdo()->lastInsertId($name);
+
+            return $lastInsertId ? $lastInsertId : null;
         } catch (PDOException $exception) {
             throw new DatabaseException($exception->getMessage(), (int) $exception->getCode(), $exception);
         }
@@ -235,12 +240,10 @@ class PdoAdapter implements AdapterInterface
      */
     public function escapeValue(string $value): string
     {
-        switch ($this->driver) {
-            case DatabaseManager::DRIVER_MYSQL:
-                return str_replace(['\\', "\0", "\n", "\r", "'", '"', "\x1a"], ['\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'], $value);
-            default:
-                throw new DatabaseException('Method not yet implemented for this database');
-        }
+        return match ($this->driver) {
+            DatabaseManager::DRIVER_MYSQL => str_replace(['\\', "\0", "\n", "\r", "'", '"', "\x1a"], ['\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'], $value),
+            default => throw new DatabaseException('Method not yet implemented for this database'),
+        };
     }
 
     protected function getPdo(): PDO
