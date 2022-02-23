@@ -6,10 +6,10 @@
   "license": "BSD-3-Clause",
   "require": {
     "php": "^8.0",
-    "psr/log": "^3.0"
+    "psr/log": "^1.0.1 || ^2.0 || ^3.0"
   },
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "^3.3",
+    "friendsofphp/php-cs-fixer": "^3.6",
     "phpstan/phpstan": "^1.2",
     "phpunit/phpunit": "^9.5"
   },
@@ -24,7 +24,7 @@
     }
   },
   "scripts": {
-    "lint": "php-cs-fixer fix --verbose --show-progress=estimating",
+    "lint": "php-cs-fixer fix --verbose --show-progress=dots",
     "lint:check": "php-cs-fixer fix --dry-run --verbose --show-progress=dots",
     "phpunit": "phpunit",
     "phpstan": "phpstan analyze",
