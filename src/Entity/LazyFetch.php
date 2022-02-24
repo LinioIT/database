@@ -22,7 +22,7 @@ class LazyFetch
         try {
             $row = $this->pdoStatement->fetch(\PDO::FETCH_ASSOC);
         } catch (PDOException $exception) {
-            throw new FetchException($exception->getMessage(), $exception->getCode(), $exception);
+            throw new FetchException($exception->getMessage(), (int) ($exception->getCode()), $exception);
         }
 
         if ($row === false) {
