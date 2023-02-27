@@ -42,7 +42,7 @@ class PdoAdapter implements AdapterInterface
             throw new FetchException($exception->getMessage(), (int) $exception->getCode(), $exception);
         }
 
-        if ($rows === false) {
+        if (!$rows) {
             return [];
         }
 
@@ -109,7 +109,7 @@ class PdoAdapter implements AdapterInterface
             throw new FetchException($exception->getMessage(), (int) $exception->getCode(), $exception);
         }
 
-        if ($keyPairs === false) {
+        if (!$keyPairs) {
             return [];
         }
 
@@ -129,7 +129,7 @@ class PdoAdapter implements AdapterInterface
             throw new FetchException($exception->getMessage(), (int) $exception->getCode(), $exception);
         }
 
-        if ($rows === false) {
+        if (!$rows) {
             return [];
         }
 
