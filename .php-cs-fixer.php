@@ -15,6 +15,7 @@ return $config->setRules([
         'blank_line_after_opening_tag' => true,
         'concat_space' => ['spacing' => 'one'],
         'declare_strict_types' => true,
+        'global_namespace_import' => ['import_classes' => true],
         'increment_style' => ['style' => 'post'],
         'is_null' => true,
         'list_syntax' => ['syntax' => 'short'],
