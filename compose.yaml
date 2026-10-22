@@ -1,0 +1,32 @@
+services:
+  tests:
+    build:
+      context: .
+      secrets:
+        - host-ca
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      TEST_DATABASE_HOST: mysql
+      TEST_DATABASE_PORT: 3306
+      TEST_DATABASE_DBNAME: framework_database_test
+      TEST_DATABASE_USERNAME: root
+      TEST_DATABASE_PASSWORD: "123456"
+    volumes:
+      - ./coverage:/coverage
+
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_DATABASE: framework_database_test
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p123456"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+secrets:
+  host-ca:
+    file: ${SSL_CERT_FILE:-/dev/null}

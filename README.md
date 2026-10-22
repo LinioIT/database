@@ -14,11 +14,52 @@ $ composer require linio/database
 
 ## Tests
 
-To run the test suite, you need install the dependencies via composer, then
-run PHPUnit.
+Run the test suite in Docker with PHP 8.3.36 and MySQL; PHP does not need to be
+installed on the host:
+
+    $ docker compose run --build --rm tests
+
+If your network uses a custom CA certificate bundle, set `SSL_CERT_FILE` to
+that bundle. When Docker Bake requests permission to read the bundle outside
+the project, build with access limited to that file, then run the tests:
+
+```bash
+docker compose build --print | docker buildx bake --file - \
+    --allow "fs.read=${SSL_CERT_FILE:?Set SSL_CERT_FILE to your CA bundle}" \
+    --load tests
+docker compose run --rm tests
+```
+
+Docker mounts the certificate bundle as a build secret to download Composer
+dependencies. The temporary combined CA bundle is removed in the same build
+step and is not stored in the image.
+
+The MySQL container remains running after the tests finish. Stop and remove it
+with:
+
+    $ docker compose down
+
+To run the test suite directly on the host instead, install the Composer
+dependencies and run PHPUnit:
 
     $ composer install
     $ vendor/bin/phpunit
+
+### Code coverage in Docker
+
+Rebuild the test image after updating the Dockerfile. Xdebug is installed but
+disabled for normal test runs. Enable it to generate coverage reports:
+
+```bash
+docker compose run --rm -e XDEBUG_MODE=coverage tests vendor/bin/phpunit \
+    --coverage-text \
+    --coverage-html /coverage/html \
+    --coverage-clover /coverage/clover.xml
+```
+
+The `coverage` directory is mounted from the host so the reports remain
+available after the container exits. Open the HTML report on macOS with
+`open coverage/html/index.html`. Reports are excluded from Git and Docker builds.
 
 ## Usage
 

@@ -12,10 +12,15 @@ jobs:
 
     strategy:
       matrix:
-        php: [8.0, 8.1]
+        php: [8.3.36]
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
